@@ -51,29 +51,13 @@ END
 // Menu
 //
 
-IDM_MENU MENU
+IDR_MENU1 MENU
 BEGIN
-    POPUP "FILE"
+    POPUP "File"
     BEGIN
-        MENUITEM "&Open File...\tCtrl+O",       ID_OPEN_FILE
-        MENUITEM "&Save File...\tCtrl+S",       ID_SAVE_FILE
+        MENUITEM "Open File",                   ID_FILE_OPENFILE
+        MENUITEM "Save File",                   ID_FILE_SAVE
     END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Accelerator
-//
-
-IDA_MENU ACCELERATORS
-BEGIN
-    "^O",           ID_OPEN_FILE,           ASCII,  NOINVERT
-    "^S",           ID_SAVE_FILE,           ASCII,  NOINVERT
-//    "E",            ID_ERASER,              VIRTKEY, CONTROL, NOINVERT
-//    "P",            ID_PENCIL,              VIRTKEY, CONTROL, NOINVERT
-//    "C",            ID_COLOR,               VIRTKEY, CONTROL, NOINVERT
-//    "R",            ID_RENDLINE,            VIRTKEY, CONTROL, NOINVERT
 END
 
 #endif    // 中文(简体，中国) resources

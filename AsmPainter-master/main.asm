@@ -16,47 +16,20 @@ includelib comdlg32.lib
 include msvcrt.inc
 includelib msvcrt.lib
 
-IDA_MENU	equ			101
-WM_CHANGE_COLOR	equ		WM_USER + 1
-IDM_MENU                equ			102
-;IDR_TOOLBAR1		equ			105
-;IDB_BITMAP7          equ          108
+WM_CHANGE_COLOR			equ			WM_USER + 1
+IDR_MENU1               equ			101
 IDM_OPEN				equ			40001
 IDM_SAVE				equ			40002
-;IDM_PENCIL			equ			40003
-;IDM_ERASER			equ			40004
-;IDM_COLOR			equ			40009
-;IDM_LINE					equ			40006
-;IDM_RENDLINE		equ			40008
-ID_OPEN_FILE			equ			40015
-ID_SAVE_FILE			equ			40007
-;ID_PENCIL				equ			40010
-;ID_ERASER				equ			40011
-;ID_COLOR				equ			40012
-;ID_RENDLINE			equ			40013
-;ID_TOOLBAR			equ			1
-PENCIL						equ			1
-;ERASER					equ			3
-LINE							equ			2
-;RENDLINE				equ			7
+ID_FILE_OPENFILE		equ			40002
+ID_FILE_SAVE			equ			40003
 
 .data
 MouseClick				db			FALSE
-pen_what					dd			PENCIL
-paint_what				dd			LINE
 fgColor					dd			0
 acrCustClr				dd			16 dup(0)
 openFileN							OPENFILENAME <>
-FilterString              byte         "BitMap(*.bmp)",0,"*.bmp",0
-OtherBmp         byte         ".bmp",0
-;stToolbar					equ			this byte
-;TBBUTTON				<0,IDM_OPEN,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;TBBUTTON				<1,IDM_SAVE,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;TBBUTTON				<2,IDM_PENCIL,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;TBBUTTON				<3,IDM_ERASER,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;TBBUTTON				<4,IDM_COLOR,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;TBBUTTON				<5,IDM_RENDLINE,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;NUM_BUTTONS		equ			6
+FilterString            byte		"BitMap(*.bmp)",0,"*.bmp",0
+OtherBmp				byte		".bmp",0
 
 aColor			dd			0h,\
 							0c0c0c0h,\
@@ -83,16 +56,17 @@ aColor			dd			0h,\
 							04080h,\
 							0ff0080h
 szColor = ($ - offset aColor)
+
 .data?
-hInstance					dd			?
+hInstance				dd			?
 hWinMain				dd			? 
 hWndSendTo				dd			?
-hMenu						dd			?
+hMenu					dd			?
 hAccelerator			dd			?
-buffer						dd			?
-hitpoint					POINT		<>
-movpoint					POINT		<>
-fileNameBuffer		byte			1000 DUP(?)
+buffer					dd			?
+hitpoint				POINT		<>
+movpoint				POINT		<>
+fileNameBuffer			byte		1000 DUP(?)
 
 
 .const
@@ -330,21 +304,9 @@ _CreateBuffer proc uses eax ecx,hWnd
 	ret
 _CreateBuffer endp
 
-;_CreateToolbar proc uses eax,hWnd:HWND,hIns:HINSTANCE
-;	LOCAL @hbmp:HBITMAP
-;	;invoke LoadBitmap,hIns,IDB_BITMAP7
-;	mov @hbmp,eax
-;	invoke CreateToolbarEx,hWnd,WS_VISIBLE or WS_CHILD or TBSTYLE_FLAT or TBSTYLE_TOOLTIPS or\
-;	CCS_ADJUSTABLE,ID_TOOLBAR,6,0,@hbmp,offset stToolbar,\
-;	NUM_BUTTONS,16,16,16,16,sizeof TBBUTTON
-;	mov hWinToolbar,eax
-;	ret
-;_CreateToolbar endp
-
 _CreateMenu proc uses eax,hIns:HINSTANCE
-	invoke LoadMenu,hIns,IDM_MENU
+	invoke LoadMenu,hIns,IDR_MENU1
 	mov hMenu,eax
-	invoke LoadAccelerators,hIns,IDA_MENU
 	mov hAccelerator,eax
 	ret
 _CreateMenu endp
@@ -420,12 +382,9 @@ _ProcWinMain proc uses ebx edi esi,hWnd,uMsg,wParam,lParam
 		
 	mov eax,uMsg
 	.if eax == WM_CLOSE
-		;invoke DestroyWindow,hWinMain
 		invoke PostQuitMessage,NULL
 
 	.elseif eax == WM_CREATE
-		;invoke _CreateToolbar,hWnd,hInstance
-		;invoke _CreateMenu,hInstance
 		invoke _CreateBuffer,hWnd
 		invoke _CreateColorBox,hInstance,hWnd,0
 
@@ -464,26 +423,16 @@ _ProcWinMain proc uses ebx edi esi,hWnd,uMsg,wParam,lParam
 			mov @tempBit,eax
 			invoke SelectObject,@temphDc,@tempBit
 			invoke BitBlt,@temphDc,0,0,WndWidth,WndHeight,buffer,0,0,SRCCOPY
-			;.if pen_what == PENCIL
-				invoke CreatePen,PS_SOLID,1,fgColor
-				mov @hPen,eax
-			;.else
-			;	invoke CreatePen,PS_SOLID,30,0ffffffh
-			;	mov @hPen,eax
-			;.endif
+			invoke CreatePen,PS_SOLID,1,fgColor
+			mov @hPen,eax
 			invoke SelectObject,@temphDc,@hPen
-			;.if paint_what == LINE
-				invoke MoveToEx,@temphDc,hitpoint.x,hitpoint.y,NULL
-				invoke LineTo,@temphDc,movpoint.x,movpoint.y
+			invoke MoveToEx,@temphDc,hitpoint.x,hitpoint.y,NULL
+			invoke LineTo,@temphDc,movpoint.x,movpoint.y
 								
-				push movpoint.x
-				push movpoint.y
-				pop hitpoint.y
-				pop hitpoint.x
-			;.elseif paint_what == RENDLINE
-			;	invoke MoveToEx,@temphDc,hitpoint.x,hitpoint.y,NULL
-			;	invoke LineTo,@temphDc,movpoint.x,movpoint.y
-			;.endif
+			push movpoint.x
+			push movpoint.y
+			pop hitpoint.y
+			pop hitpoint.x
 			invoke BitBlt,buffer,0,0,WndWidth,WndHeight,@temphDc,0,0,SRCCOPY
 				
 			invoke DeleteObject,@hPen
@@ -502,39 +451,19 @@ _ProcWinMain proc uses ebx edi esi,hWnd,uMsg,wParam,lParam
 
 	.elseif eax == WM_COMMAND
 		mov eax,wParam
-		.if ax == IDM_SAVE || ax == ID_SAVE_FILE
+		.if ax == ID_FILE_SAVE
 			invoke _MySaveFile,hWnd
-		.elseif ax == IDM_OPEN || ax == ID_OPEN_FILE
+		.elseif ax == ID_FILE_OPENFILE
 			invoke _MyOpenFile,hWnd
-		;.elseif ax == IDM_PENCIL || ax ==ID_PENCIL
-		;	mov pen_what,PENCIL
-		;	mov paint_what,LINE
-		;.elseif ax == IDM_ERASER ||  ax == ID_ERASER
-		;	mov pen_what,ERASER
-		;	mov paint_what,LINE
-		;.elseif ax == IDM_COLOR || ax == ID_COLOR
-	;		invoke _MySelectColor,hWnd
-	;	.elseif ax == IDM_RENDLINE || ax == ID_RENDLINE
-	;		mov pen_what,PENCIL
-	;		mov paint_what,RENDLINE
-		;.elseif ax == IDM_COLORBOX_ISDOCK
-			;invoke CheckMenuItem, @hMenu, IDM_COLORBOX_ISDOCK, MF_BYCOMMAND or MF_UNCHECKED
-			;invoke CheckMenuItem, @hMenu, IDM_COLORBOX_NOTDOCK, 
-;
-		;.elseif ax == IDM_COLORBOX_NOTDOCK
 		.endif
 
 	.elseif eax == WM_CHANGE_COLOR
 		mov eax, lParam
 		mov fgColor, eax
 		invoke DeleteObject, @hPen
-		.if pen_what == PENCIL
-			invoke CreatePen,PS_SOLID,1,fgColor
-			mov @hPen,eax
-		.else
-			invoke CreatePen,PS_SOLID,30,fgColor
-			mov @hPen,eax
-		.endif
+
+		invoke CreatePen,PS_SOLID,1,fgColor
+		mov @hPen,eax
 
 	.else 
  		invoke DefWindowProc,hWnd,uMsg,wParam,lParam
@@ -699,11 +628,9 @@ _RegisterColorClass proc @hInstance
 ret
 _RegisterColorClass endp
 
-
 _WinMain proc
 	LOCAL @stWndClass:WNDCLASSEX
 	LOCAL @stMsg:MSG
-	;LOCAL hAccelerator:HACCEL
 	;If the function succeeds, the return value is a handle to the specified module.
 	invoke GetModuleHandle,NULL
 	mov hInstance,eax
@@ -723,7 +650,7 @@ _WinMain proc
 	mov @stWndClass.hbrBackground,COLOR_WINDOW+1
 	;COLOR_BACKGROUND COLOR_HIGHLIGHT COLOR_MENU COLOR_WINDOW..预置
 	mov @stWndClass.lpszClassName,offset szClassName
-	mov @stWndClass.lpszMenuName,IDM_MENU
+	mov @stWndClass.lpszMenuName,IDR_MENU1
 	invoke RegisterClassEx,addr @stWndClass
 	invoke _RegisterColorClass, hInstance
 
@@ -743,7 +670,7 @@ _WinMain proc
 
 
 
-	invoke LoadAccelerators,hInstance,IDA_MENU;IDA_MENU在rc中定义,为快捷键
+	;invoke LoadAccelerators,hInstance,IDA_MENU;IDA_MENU在rc中定义,为快捷键
 	mov hAccelerator,eax
 		
 	;消息循环
