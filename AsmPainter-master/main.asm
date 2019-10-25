@@ -143,17 +143,8 @@ local @hdcBmp:HDC
 local @hBmp:HBITMAP
 local @tempDC:HDC
 local @tempBmp:HBITMAP
-local @OF:OPENFILENAME
 
-	; open file
-	invoke	RtlZeroMemory,addr @OF,sizeof @OF
-	mov		@OF.lStructSize,sizeof @OF
-	mov		@OF.hwndOwner,NULL
-	mov		@OF.lpstrFilter,offset szFilter
-	mov		@OF.lpstrFile,offset szFileNameBuffer 
-	mov		@OF.nMaxFile,sizeof szFileNameBuffer 
-	mov		@OF.Flags,OFN_FILEMUSTEXIST or OFN_PATHMUSTEXIST
-	invoke	GetOpenFileName,addr @OF
+	invoke _GetOpenFileName
 	.if (!eax)
 		ret
 	.endif

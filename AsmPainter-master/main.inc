@@ -103,4 +103,5 @@ szColorBtnClass			db			'ColorBtn', 0
 szColorBoxClass			db			'ColorBox', 0
 szFilter				db			"BitMap(*.bmp)",0,"*.bmp",0
 szOtherBmp				db			".bmp",0
-szDefaultSaveFile		db			"1.bmp",0	
+szDefaultSaveFile		db			"1.bmp",0
+szDefaultOpenFile		db			".bmp",0
