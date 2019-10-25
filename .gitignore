@@ -1,8 +1,13 @@
 
 *.tlog
 *.db
-
-
+*.sln
+*.vcxproj
+*.aps
 *.filters
+*.sdf
+*.user
+src/
+AsmPainter-master/.vs/
+AsmPainter-master/Debug/
 
-src/镼&
