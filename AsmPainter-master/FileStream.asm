@@ -23,7 +23,7 @@ local @openfile: OPENFILENAME
 	ret
 _GetSaveFileName endp
 
-_CheckBmpSuffix proc uses ebx, _lpszFileNameBuffer:ptr byte
+_CheckBmpSuffix proc uses ebx, _lpszFileNameBuffer: ptr byte
 local	@len:	DWORD
 	invoke	crt_strlen, _lpszFileNameBuffer
 	mov		@len, eax
@@ -40,11 +40,12 @@ local	@len:	DWORD
 	.endif
 _CheckBmpSuffix endp
 
-_GetOpenFileName proc
+_GetOpenFileName proc,	_lpszFileNameBuffer:ptr byte
 local @openfile: OPENFILENAME
 	invoke	RtlZeroMemory,	addr @openfile,	sizeof @openfile
-	invoke	crt_strcpy,	offset szFileNameBuffer,	offset szDefaultOpenFile
-	mov		@openfile.lpstrFile,	offset szFileNameBuffer
+	invoke	crt_strcpy,	_lpszFileNameBuffer,	offset szDefaultOpenFile
+	mov		eax,					_lpszFileNameBuffer
+	mov		@openfile.lpstrFile,	eax
 	mov		@openfile.nMaxFile,		MAX_FILESIZE
 	mov		@openfile.lpstrFilter,	offset	szFilter
 	mov		@openfile.lpstrDefExt,	offset	szOtherBmp
@@ -54,7 +55,7 @@ local @openfile: OPENFILENAME
 	mov		@openfile.hwndOwner,	NULL
 	invoke	GetSaveFileName,		addr @openfile
 	.if	eax
-		mov eax,	offset szFileNameBuffer
+		mov eax,	_lpszFileNameBuffer
 		ret
 	.else
 		mov eax,	NULL

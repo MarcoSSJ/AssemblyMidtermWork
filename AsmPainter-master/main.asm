@@ -142,7 +142,7 @@ local @hBmp:HBITMAP
 local @tempDC:HDC
 local @tempBmp:HBITMAP
 
-	invoke _GetOpenFileName
+	invoke _GetOpenFileName, offset szFileNameBuffer
 	.if (!eax)
 		ret
 	.endif
