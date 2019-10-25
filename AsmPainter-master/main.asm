@@ -35,7 +35,7 @@ option casemap:none
 include main.inc
 .code
 include ColorBox.asm
-
+include	FileStream.asm
 _MySaveFile proc uses edx ebx _hWnd:HWND
 local @hdc:HDC
 local @hdcBmp:HDC
@@ -50,18 +50,8 @@ local @hFile:HANDLE
 local @DIBSize:dword
 local @WrittenBytes:dword
 local @len:dword
-local @SF:OPENFILENAME
 
-	invoke	RtlZeroMemory,addr @SF,sizeof @SF
-	mov		@SF.lStructSize,sizeof @SF
-	mov		@SF.hwndOwner,NULL 
-	;push hInstance 
-	;pop  openFileN.hInstance 
-	mov		@SF.lpstrFilter,offset szFilter 
-	mov		@SF.lpstrFile,offset szFileNameBuffer 
-	mov		@SF.nMaxFile,sizeof szFileNameBuffer 
-	mov		@SF.Flags,OFN_PATHMUSTEXIST
-	invoke	GetSaveFileName,addr @SF
+	invoke _GetSaveFileName
 	.if (!eax)
 		ret
 	.endif
