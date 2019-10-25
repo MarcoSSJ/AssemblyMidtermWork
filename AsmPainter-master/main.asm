@@ -27,7 +27,7 @@ ID_FILE_SAVE			equ			40003
 MouseClick				db			FALSE
 fgColor					dd			0
 acrCustClr				dd			16 dup(0)
-openFileN							OPENFILENAME <>
+;openFileN							OPENFILENAME <>
 FilterString            byte		"BitMap(*.bmp)",0,"*.bmp",0
 OtherBmp				byte		".bmp",0
 
@@ -94,16 +94,18 @@ _MySaveFile proc USES edx ebx hWnd:HWND
 	local @DIBSize:dword
 	local @WrittenBytes:dword
 	local @len:dword
+	local @SF:OPENFILENAME
 
-	mov  openFileN.lStructSize,SIZEOF openFileN
-	mov  openFileN.hwndOwner,NULL 
-	push hInstance 
-	pop  openFileN.hInstance 
-	mov  openFileN.lpstrFilter,OFFSET FilterString 
-	mov  openFileN.lpstrFile,OFFSET fileNameBuffer 
-	mov  openFileN.nMaxFile,SIZEOF fileNameBuffer 
-	mov  openFileN.Flags,OFN_PATHMUSTEXIST
-	invoke GetSaveFileName,ADDR openFileN
+	invoke	RtlZeroMemory,addr @SF,sizeof @SF
+	mov  @SF.lStructSize,SIZEOF @SF
+	mov  @SF.hwndOwner,NULL 
+	;push hInstance 
+	;pop  openFileN.hInstance 
+	mov  @SF.lpstrFilter,OFFSET FilterString 
+	mov  @SF.lpstrFile,OFFSET fileNameBuffer 
+	mov  @SF.nMaxFile,SIZEOF fileNameBuffer 
+	mov  @SF.Flags,OFN_PATHMUSTEXIST
+	invoke GetSaveFileName,ADDR @SF
 	.IF (!eax)
 		ret
 	.ENDIF
@@ -195,8 +197,21 @@ _MyOpenFile proc hWnd:HWND
 	local @hBmp:HBITMAP
 	local @tempDC:HDC
 	local @tempBmp:HBITMAP
-  
+	local @OF:OPENFILENAME
 
+	; open file
+	invoke	RtlZeroMemory,addr @OF,sizeof @OF
+	mov  @OF.lStructSize,sizeof @OF
+	mov  @OF.hwndOwner,NULL
+	mov  @OF.lpstrFilter,OFFSET FilterString
+	mov  @OF.lpstrFile,OFFSET fileNameBuffer 
+	mov  @OF.nMaxFile,sizeof fileNameBuffer 
+	mov  @OF.Flags,OFN_FILEMUSTEXIST or OFN_PATHMUSTEXIST
+	invoke GetOpenFileName,ADDR @OF
+	.IF (!eax)
+		ret
+	.ENDIF
+	; 成功打开，初始化环境，load 进来
 	invoke GetDC,hWnd
 	mov @hdc,eax
 	invoke CreateCompatibleDC,@hdc
@@ -208,23 +223,12 @@ _MyOpenFile proc hWnd:HWND
 	invoke SelectObject,@tempDC,@tempBmp
 	invoke BitBlt,@tempDC,0,0,WndWidth,WndHeight,buffer,0,0,SRCCOPY
 
-	mov  openFileN.lStructSize,sizeof openFileN
-	mov  openFileN.hwndOwner,NULL 
-	push hInstance 
-	pop  openFileN.hInstance 
-	mov  openFileN.lpstrFilter,OFFSET FilterString 
-	mov  openFileN.lpstrFile,OFFSET fileNameBuffer 
-	mov  openFileN.nMaxFile,sizeof fileNameBuffer 
-	mov  openFileN.Flags,OFN_FILEMUSTEXIST or OFN_PATHMUSTEXIST
-	invoke GetOpenFileName,ADDR openFileN
-	.IF (!eax)
-		ret
-	.ENDIF
 	invoke LoadImage,hInstance,addr fileNameBuffer,IMAGE_BITMAP,0,0,LR_LOADFROMFILE 
 	.IF (!eax)
 		ret
 	.ENDIF
 
+	
 	mov @hBmp,HBITMAP PTR eax
 	invoke SelectObject,@hdcBmp,@hBmp
 	invoke BitBlt,@tempDC,0,0,WndWidth,WndHeight,@hdcBmp,0,0,SRCCOPY
