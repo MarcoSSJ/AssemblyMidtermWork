@@ -55,15 +55,7 @@ local @len:dword
 	.if  (!eax)
 		ret
 	.endif
-
-	invoke _CheckBmpSuffix, offset szFileNameBuffer
-	.if eax
-	.else
-		ret
-		;add	ebx, 4
-		;invoke	crt_strcpy, ebx, offset szOtherBmp
-	.endif
-
+	;没有必要检查结尾,因为windows会自动补全.bmp
 
 	invoke	GetDC,_hWnd;函数功能：该函数检索一指定窗口的客户区域或整个屏幕的显示设备上下文环境的句柄，以后可以在GDI函数中使用该句柄来在设备上下文环境中绘图。
 	mov		@hdc,eax

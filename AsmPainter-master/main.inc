@@ -105,3 +105,5 @@ szFilter				db			"BitMap(*.bmp)",0,"*.bmp",0
 szOtherBmp				db			".bmp",0
 szDefaultSaveFile		db			"1.bmp",0
 szDefaultOpenFile		db			".bmp",0
+szErrorSuffixNoBmp		db			'保存格式必须以bmp结尾!',0
+szError					db			'Error!',0
