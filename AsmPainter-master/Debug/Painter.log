@@ -1,0 +1,4 @@
+﻿  Assembling main.asm...
+main.asm(546): warning A6004: procedure argument or local not referenced : @color
+main.asm(662): warning A6004: procedure argument or local not referenced : @i
+  Painter.vcxproj -> C:\Users\孙士杰\Desktop\AsmPainter-master\Debug\Painter.exe
