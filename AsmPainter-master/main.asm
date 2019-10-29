@@ -36,6 +36,7 @@ include main.inc
 .code
 include ColorBox.asm
 include	FileStream.asm
+
 _MySaveFile proc uses edx ebx _hWnd:HWND
 local @hdc:HDC
 local @hdcBmp:HDC
@@ -49,7 +50,6 @@ local @lpbitmap:ptr byte
 local @hFile:HANDLE  
 local @DIBSize:dword
 local @WrittenBytes:dword
-local @len:dword
 
 	invoke _GetSaveFileName, offset szFileNameBuffer 
 	.if  (!eax)
@@ -247,11 +247,7 @@ _ProcWinMain proc uses ebx edi esi,_hWnd,_stMsg,_wParam,_lParam
 local	@stPs:PAINTSTRUCT
 local	@hDc:HDC
 local	@hPen:HPEN
-local	@myhDc:HDC
-local	@temphDc:HDC
-local	@tempBit:HBITMAP
 local	@hMenu: HMENU
-local	@color: COLORREF
 
 	invoke	GetMenu, _hWnd
 	mov		@hMenu, eax
@@ -291,31 +287,17 @@ local	@color: COLORREF
 		mov stMovPoint.y,eax
 		invoke _ComparePos,stMovPoint
 		.if bMouseClick == TRUE
-			invoke	GetDC,_hWnd
-			mov		@myhDc,eax
-			invoke	CreateCompatibleDC,@myhDc
-			mov		@temphDc,eax
-			invoke	CreateCompatibleBitmap,@myhDc,WINDOW_WIDTH,WINDOW_HEIGHT
-			mov		@tempBit,eax
-			invoke	SelectObject,@temphDc,@tempBit
-			invoke	BitBlt,@temphDc,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,dBuffer,0,0,SRCCOPY
 			invoke	CreatePen,PS_SOLID,1,dwCurColor
 			mov		@hPen,eax
-			invoke	SelectObject,@temphDc,@hPen
-			invoke	MoveToEx,@temphDc,stHitPoint.x,stHitPoint.y,NULL
-			invoke	LineTo,@temphDc,stMovPoint.x,stMovPoint.y
+			invoke	SelectObject,dBuffer,@hPen
+			invoke	MoveToEx,dBuffer,stHitPoint.x,stHitPoint.y,NULL
+			invoke	LineTo,dBuffer,stMovPoint.x,stMovPoint.y
 								
 			push	stMovPoint.x
 			push	stMovPoint.y
 			pop		stHitPoint.y
 			pop		stHitPoint.x
-			invoke	BitBlt,dBuffer,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,@temphDc,0,0,SRCCOPY
-				
 			invoke	DeleteObject,@hPen
-			invoke	DeleteObject,@tempBit
-			invoke	DeleteDC,@temphDc
-			invoke	ReleaseDC,_hWnd,@myhDc
-
 			invoke	InvalidateRect,_hWnd,0,FALSE
 			invoke	UpdateWindow,_hWnd
 		.endif

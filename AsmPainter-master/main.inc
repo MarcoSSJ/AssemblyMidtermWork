@@ -57,7 +57,6 @@ BUTTON_WIDTH			equ			40
 bMouseClick				db			FALSE
 dwCurColor				dd			0
 dwArrCustomColor		dd			16 dup(0)
-;openFileN							OPENFILENAME <>
 lpDwColors				dd			0h,\
 									0c0c0c0h,\
 									0808080h,\
