@@ -58,6 +58,25 @@ BEGIN
         MENUITEM "Open File",                   ID_FILE_OPENFILE
         MENUITEM "Save File",                   ID_FILE_SAVE
     END
+    POPUP "Pen"
+    BEGIN
+        MENUITEM "width 1 ",                    ID_PEN_WIDTH1
+        MENUITEM "width 2",                     ID_PEN_WIDTH2
+        MENUITEM "width 3",                     ID_PEN_WIDTH3
+        MENUITEM "width 4",                     ID_PEN_WIDTH4
+        MENUITEM "width 5",                     ID_PEN_WIDTH5
+        MENUITEM "width 6",                     ID_PEN_WIDTH6
+        MENUITEM "width 7",                     ID_PEN_WIDTH7
+        MENUITEM "width 8",                     ID_PEN_WIDTH8
+        MENUITEM "width 9",                     ID_PEN_WIDTH9
+        MENUITEM "width 10",                    ID_PEN_WIDTH10
+    END
+    POPUP "Shape"
+    BEGIN
+        MENUITEM "Circle",                      ID_SHAPE_CIRCLE
+        MENUITEM "Rectangle",                   ID_SHAPE_RECTANGLE
+        MENUITEM "Line",                        ID_SHAPE_LINE
+    END
 END
 
 #endif    // 中文(简体，中国) resources

@@ -49,6 +49,19 @@ IDM_OPEN				equ			40001
 IDM_SAVE				equ			40002
 ID_FILE_OPENFILE		equ			40002
 ID_FILE_SAVE			equ			40003
+ID_PEN_WIDTH1           equ         40004
+ID_PEN_WIDTH2           equ         40005
+ID_PEN_WIDTH3           equ         40006
+ID_PEN_WIDTH4           equ			40007
+ID_PEN_WIDTH5           equ         40008
+ID_PEN_WIDTH6           equ         40009
+ID_PEN_WIDTH7           equ         40010
+ID_PEN_WIDTH8           equ			40011
+ID_PEN_WIDTH9           equ         40012
+ID_PEN_WIDTH10          equ         40013
+ID_SHAPE_CIRCLE         equ         40014
+ID_SHAPE_RECTANGLE      equ         40015
+ID_SHAPE_LINE           equ         40016
 MAX_FILESIZE			equ			1000
 WINDOW_WIDTH			equ			800
 WINDOW_HEIGHT			equ			600
@@ -56,6 +69,8 @@ BUTTON_WIDTH			equ			40
 .data
 bMouseClick				db			FALSE
 dwCurColor				dd			0
+bpenwidth				db			1
+bpentype				db			1;1£ºpencil, 2£ºcircle, 3:Rectangle, 4:line, default:pencil
 dwArrCustomColor		dd			16 dup(0)
 lpDwColors				dd			0h,\
 									0c0c0c0h,\
@@ -91,7 +106,9 @@ hMenu					dd			?
 hAccelerator			dd			?
 dBuffer					dd			?
 stHitPoint				POINT		<>
+stLastMovPoint			POINT		<>
 stMovPoint				POINT		<>
+stReleasePoint			POINT		<>
 szFileNameBuffer		db			MAX_FILESIZE DUP(?)
 
 

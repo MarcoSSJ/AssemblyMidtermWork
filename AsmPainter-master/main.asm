@@ -247,6 +247,7 @@ _ProcWinMain proc uses ebx edi esi,_hWnd,_stMsg,_wParam,_lParam
 local	@stPs:PAINTSTRUCT
 local	@hDc:HDC
 local	@hPen:HPEN
+local	@hBrush:HBRUSH
 local	@hMenu: HMENU
 
 	invoke	GetMenu, _hWnd
@@ -277,6 +278,10 @@ local	@hMenu: HMENU
 		shr eax,16
 		mov stHitPoint.y,eax
 		mov bMouseClick,TRUE
+		push stHitPoint.x
+		push stHitPoint.y
+		pop	stLastMovPoint.y
+		pop	stLastMovPoint.x
 
 	.elseif eax == WM_MOUSEMOVE
 		mov eax,_lParam
@@ -287,24 +292,144 @@ local	@hMenu: HMENU
 		mov stMovPoint.y,eax
 		invoke _ComparePos,stMovPoint
 		.if bMouseClick == TRUE
-			invoke	CreatePen,PS_SOLID,1,dwCurColor
-			mov		@hPen,eax
-			invoke	SelectObject,dBuffer,@hPen
-			invoke	MoveToEx,dBuffer,stHitPoint.x,stHitPoint.y,NULL
-			invoke	LineTo,dBuffer,stMovPoint.x,stMovPoint.y
+			.if bpentype == 1
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	SelectObject,dBuffer,@hPen
+				invoke	MoveToEx,dBuffer,stHitPoint.x,stHitPoint.y,NULL
+				invoke	LineTo,dBuffer,stMovPoint.x,stMovPoint.y
 								
-			push	stMovPoint.x
-			push	stMovPoint.y
-			pop		stHitPoint.y
-			pop		stHitPoint.x
-			invoke	DeleteObject,@hPen
-			invoke	InvalidateRect,_hWnd,0,FALSE
-			invoke	UpdateWindow,_hWnd
+				push	stMovPoint.x
+				push	stMovPoint.y
+				pop		stHitPoint.y
+				pop		stHitPoint.x
+				invoke	DeleteObject,@hPen
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 2
+				invoke	SetROP2,dBuffer,R2_NOTXORPEN
+
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	GetStockObject,NULL_BRUSH
+				mov		@hBrush,eax
+
+				invoke	SelectObject,dBuffer,@hPen
+				invoke	SelectObject,dBuffer,@hBrush
+				invoke	MoveToEx,dBuffer,stHitPoint.x,stHitPoint.y,NULL
+				invoke	Ellipse,dBuffer,stHitPoint.x,stHitPoint.y,stLastMovPoint.x,stLastMovPoint.y
+				invoke	Ellipse,dBuffer,stHitPoint.x,stHitPoint.y,stMovPoint.x,stMovPoint.y
+				
+				push	stMovPoint.x
+				push	stMovPoint.y
+				pop		stLastMovPoint.y
+				pop		stLastMovPoint.x
+
+				invoke	DeleteObject,@hPen
+				invoke	DeleteObject,@hBrush
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 3
+				invoke	SetROP2,dBuffer,R2_NOTXORPEN
+
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	GetStockObject,NULL_BRUSH
+				mov		@hBrush,eax
+
+				invoke	SelectObject,dBuffer,@hPen
+				invoke	SelectObject,dBuffer,@hBrush
+				invoke	MoveToEx,dBuffer,stHitPoint.x,stHitPoint.y,NULL
+				invoke	Rectangle,dBuffer,stHitPoint.x,stHitPoint.y,stLastMovPoint.x,stLastMovPoint.y
+				invoke	Rectangle,dBuffer,stHitPoint.x,stHitPoint.y,stMovPoint.x,stMovPoint.y
+				
+				push	stMovPoint.x
+				push	stMovPoint.y
+				pop		stLastMovPoint.y
+				pop		stLastMovPoint.x
+
+				invoke	DeleteObject,@hPen
+				invoke	DeleteObject,@hBrush
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 4
+				invoke	SetROP2,dBuffer,R2_NOTXORPEN
+
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+
+				invoke	SelectObject,dBuffer,@hPen
+				invoke	SelectObject,dBuffer,@hBrush
+				invoke	MoveToEx,dBuffer,stHitPoint.x,stHitPoint.y,NULL
+				invoke	LineTo,dBuffer,stLastMovPoint.x,stLastMovPoint.y
+				invoke	LineTo,dBuffer,stMovPoint.x,stMovPoint.y
+				
+				push	stMovPoint.x
+				push	stMovPoint.y
+				pop		stLastMovPoint.y
+				pop		stLastMovPoint.x
+
+				invoke	DeleteObject,@hPen
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.endif
 		.endif
 
 	.elseif eax == WM_LBUTTONUP
-		.if bMouseClick == TRUE			
+		.if bMouseClick == TRUE
 			mov bMouseClick,FALSE
+			mov eax,_lParam
+			and eax,0FFFFh
+			mov stReleasePoint.x,eax
+			mov eax,_lParam
+			shr eax,16
+			mov stReleasePoint.y,eax
+			
+			.if bpentype == 2;circle
+				invoke	SetROP2,dBuffer,R2_COPYPEN
+
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	GetStockObject,NULL_BRUSH
+				mov		@hBrush,eax
+				invoke	SelectObject,dBuffer,@hPen
+				invoke	SelectObject,dBuffer,@hBrush
+				invoke	MoveToEx,dBuffer,stHitPoint.x,stHitPoint.y,NULL
+				invoke	Ellipse,dBuffer,stHitPoint.x,stHitPoint.y,stReleasePoint.x,stReleasePoint.y
+								
+				invoke	DeleteObject,@hPen
+				invoke	DeleteObject,@hBrush
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 3;rectangle
+				invoke	SetROP2,dBuffer,R2_COPYPEN
+
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	GetStockObject,NULL_BRUSH
+				mov		@hBrush,eax
+				invoke	SelectObject,dBuffer,@hPen
+				invoke	SelectObject,dBuffer,@hBrush				
+				invoke	MoveToEx,dBuffer,stHitPoint.x,stHitPoint.y,NULL
+				invoke	Rectangle,dBuffer,stHitPoint.x,stHitPoint.y,stReleasePoint.x,stReleasePoint.y
+				
+				invoke	DeleteObject,@hPen
+				invoke	DeleteObject,@hBrush
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 4;line
+				invoke	SetROP2,dBuffer,R2_COPYPEN
+
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	SelectObject,dBuffer,@hPen
+				invoke	MoveToEx,dBuffer,stHitPoint.x,stHitPoint.y,NULL
+				invoke	LineTo,dBuffer,stReleasePoint.x,stReleasePoint.y
+
+				invoke	DeleteObject,@hPen
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.endif
 		.endif
 
 	.elseif eax == WM_COMMAND
@@ -313,6 +438,34 @@ local	@hMenu: HMENU
 			invoke _MySaveFile,_hWnd
 		.elseif ax == ID_FILE_OPENFILE
 			invoke _MyOpenFile,_hWnd
+
+		.elseif ax == ID_SHAPE_CIRCLE
+			mov bpentype,2
+		.elseif ax == ID_SHAPE_RECTANGLE
+			mov bpentype,3
+		.elseif ax == ID_SHAPE_LINE
+			mov bpentype,4
+
+		.elseif ax == ID_PEN_WIDTH1
+			mov bpenwidth,1
+		.elseif ax == ID_PEN_WIDTH2
+			mov bpenwidth,2
+		.elseif ax == ID_PEN_WIDTH3
+			mov bpenwidth,3
+		.elseif ax == ID_PEN_WIDTH4
+			mov bpenwidth,4
+		.elseif ax == ID_PEN_WIDTH5
+			mov bpenwidth,5
+		.elseif ax == ID_PEN_WIDTH6
+			mov bpenwidth,6
+		.elseif ax == ID_PEN_WIDTH7
+			mov bpenwidth,7
+		.elseif ax == ID_PEN_WIDTH8
+			mov bpenwidth,8
+		.elseif ax == ID_PEN_WIDTH9
+			mov bpenwidth,9
+		.elseif ax == ID_PEN_WIDTH10
+			mov bpenwidth,10
 		.endif
 
 	.elseif eax == WM_CHANGE_COLOR
@@ -320,7 +473,7 @@ local	@hMenu: HMENU
 		mov		dwCurColor, eax
 		invoke	DeleteObject, @hPen
 
-		invoke	CreatePen,PS_SOLID,1,dwCurColor
+		invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
 		mov		@hPen,eax
 
 	.else 
