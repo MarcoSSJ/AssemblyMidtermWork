@@ -1,7 +1,7 @@
 ;匈牙利命名法
 ;	b,w,dw	表示变量是byte,word,dword
 ;	h		表示句柄
-;	lp		表示指针
+;	p/lp		表示指针
 ;	sz		表示字符串
 ;	lpsz	表示字符串指针
 ;	f		表示浮点数
@@ -33,6 +33,7 @@
 option casemap:none
 
 include main.inc
+include FileStream.inc
 .code
 include ColorBox.asm
 include	FileStream.asm
@@ -248,6 +249,8 @@ local	@stPs:PAINTSTRUCT
 local	@hDc:HDC
 local	@hPen:HPEN
 local	@hMenu: HMENU
+local	@hBitmap: HBITMAP
+local	@stRect: RECT
 
 	invoke	GetMenu, _hWnd
 	mov		@hMenu, eax
@@ -277,6 +280,19 @@ local	@hMenu: HMENU
 		shr eax,16
 		mov stHitPoint.y,eax
 		mov bMouseClick,TRUE
+		
+		mov ebx, stHitPoint.x
+		mov @stRect.left, ebx
+		add ebx, 100
+		mov @stRect.right, ebx
+		mov ebx, stHitPoint.y
+		mov @stRect.top, ebx
+		add ebx,100
+		mov @stRect.bottom, ebx
+		invoke _SaveScreenToBmp, addr @stRect, _hWnd
+		mov @hBitmap, eax
+		invoke _GetSaveFileName, offset szFileNameBuffer 
+		invoke _SaveBmpToFile, @hBitmap, _hWnd, offset szFileNameBuffer
 
 	.elseif eax == WM_MOUSEMOVE
 		mov eax,_lParam
