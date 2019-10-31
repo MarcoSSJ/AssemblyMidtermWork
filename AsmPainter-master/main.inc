@@ -42,6 +42,16 @@ include comdlg32.inc
 includelib comdlg32.lib
 include msvcrt.inc
 includelib msvcrt.lib
+PAINTINFO STRUCT
+    stPtStart	POINT	<>
+	stPtEnd		POINT	<>
+	bMouseDown	byte	0
+	hBitmap		HBITMAP	?
+	hMemDC		HDC		?
+	dwWidth		DWORD	?	
+	dwHeight	DWORD	?
+PAINTINFO ENDS
+
 
 WM_CHANGE_COLOR			equ			WM_USER + 1
 IDR_MENU1               equ			101
@@ -54,7 +64,7 @@ WINDOW_WIDTH			equ			800
 WINDOW_HEIGHT			equ			600
 BUTTON_WIDTH			equ			40
 .data
-bMouseClick				db			FALSE
+;bMouseClick				db			FALSE
 dwCurColor				dd			0
 dwArrCustomColor		dd			16 dup(0)
 lpDwColors				dd			0h,\
@@ -89,11 +99,11 @@ hWinMain				dd			?
 hWndSendTo				dd			?
 hMenu					dd			?
 hAccelerator			dd			?
-dBuffer					dd			?
-stHitPoint				POINT		<>
-stMovPoint				POINT		<>
+;dBuffer					dd			?
+;stHitPoint				POINT		<>
+;stMovPoint				POINT		<>
 szFileNameBuffer		db			MAX_FILESIZE DUP(?)
-
+stPaint		PAINTINFO	<>
 
 .const
 szClassName				db			'MyClass',0

@@ -32,7 +32,9 @@
 .model flat,stdcall
 option casemap:none
 
+
 include main.inc
+include PaintInfo.inc
 include FileStream.inc
 .code
 include ColorBox.asm
@@ -40,91 +42,15 @@ include	FileStream.asm
 
 _MySaveFile proc uses edx ebx _hWnd:HWND
 local @hdc:HDC
-local @hdcBmp:HDC
-local @hBmpBuffer:HBITMAP
-local @bmfHeader:BITMAPFILEHEADER   
-local @BitFore:BITMAPINFOHEADER   
-local @bmpScreen:BITMAP
-local @DWSize:dword
-local @hDIB:HANDLE
-local @lpbitmap:ptr byte
-local @hFile:HANDLE  
-local @DIBSize:dword
-local @WrittenBytes:dword
-
+local @stRect: RECT
+local @hBitmap: HBITMAP
 	invoke _GetSaveFileName, offset szFileNameBuffer 
 	.if  (!eax)
 		ret
 	.endif
 	;没有必要检查结尾,因为windows会自动补全.bmp
-
-	invoke	GetDC,_hWnd;函数功能：该函数检索一指定窗口的客户区域或整个屏幕的显示设备上下文环境的句柄，以后可以在GDI函数中使用该句柄来在设备上下文环境中绘图。
-	mov		@hdc,eax
-	invoke	CreateCompatibleDC,@hdc;该函数创建一个与指定设备兼容的内存设备上下文环境（DC）
-	mov		@hdcBmp,eax
-	invoke	SetStretchBltMode,@hdc,HALFTONE;Windows GDI函数，功能为该函数可以设置指定设备环境中的位图拉伸模式。
-	invoke	CreateCompatibleBitmap,@hdc,WINDOW_WIDTH,WINDOW_HEIGHT;该函数用于创建与指定的设备环境相关的设备兼容的位图。
-	mov		@hBmpBuffer,eax
-	invoke	SelectObject,@hdcBmp,@hBmpBuffer;The SelectObject function selects an object into the specified device context (DC). The new object replaces the previous object of the same type.
-	invoke	BitBlt,@hdcBmp,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,dBuffer,0,0,SRCCOPY;The BitBlt function performs a bit-block transfer of the color data corresponding to a rectangle of pixels from the specified source device context into a destination device context.
-	invoke	GetObject,@hBmpBuffer,sizeof BITMAP,addr @bmpScreen;The GetObject function retrieves information for the specified graphics object.
-	push	sizeof BITMAPINFOHEADER
-	pop		@BitFore.biSize;参见这里https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapinfoheader
-	push	@bmpScreen.bmWidth
-	pop		@BitFore.biWidth
-	push	@bmpScreen.bmHeight
-	pop		@BitFore.biHeight
-	mov		@BitFore.biPlanes,1
-	mov		@BitFore.biBitCount,32
-	mov		@BitFore.biCompression,BI_RGB
-	mov		@BitFore.biSizeImage,0
-	mov		@BitFore.biXPelsPerMeter,0
-	mov		@BitFore.biYPelsPerMeter,0
-	mov		@BitFore.biClrUsed,0
-	mov		@BitFore.biClrImportant,0
-
-	movzx	eax,@BitFore.biBitCount;movzx零填充
-	mul		@bmpScreen.bmWidth
-	add		eax,31
-	mov		ebx,32
-	cdq								;这个指令把 EAX 的第 31 bit 复制到 EDX 的每一个 bit 上。 它大多出现在除法运算之前。它实际的作用只是把EDX的所有位都设成EAX最高位的值
-	div		ebx
-	mov		edx,4
-	mul		edx
-	mul		@bmpScreen.bmHeight
-	mov		@DWSize,eax
-	invoke	GlobalAlloc,GHND,@DWSize
-	mov		@hDIB,eax
-	invoke	GlobalLock,@hDIB;Locks a global memory object and returns a pointer to the first byte of the object's memory block.
-	mov		@lpbitmap,eax
-
-	invoke	GetDIBits,@hdc,@hBmpBuffer,0,@bmpScreen.bmHeight,@lpbitmap,addr @BitFore,DIB_RGB_COLORS;The GetDIBits function retrieves the bits of the specified compatible bitmap and copies them into a buffer as a DIB using the specified format.
-	invoke	CreateFile,addr szFileNameBuffer,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL;This function creates, opens, or truncates a file, COM port, device, service, or console. It returns a handle that you can use to access the object.
-	mov		@hFile,eax
-	mov		eax,@DWSize 
-	add		eax,sizeof BITMAPFILEHEADER
-	add		eax,sizeof BITMAPINFOHEADER
-	mov		@DIBSize,eax
-
-	mov		eax,sizeof BITMAPFILEHEADER
-	add		eax,sizeof BITMAPINFOHEADER
-	mov		@bmfHeader.bfOffBits,eax
-	push	@DIBSize
-	pop		@bmfHeader.bfSize
-	mov		@bmfHeader.bfType,4D42h;' file type always 4D42h or "BM"
-								;https://rerickso.w3.uvm.edu/projects/vb_bmp/BMP.html 利用c写的
-
-	invoke	WriteFile,@hFile,addr @bmfHeader,sizeof BITMAPFILEHEADER,addr @WrittenBytes,NULL
-	invoke	WriteFile,@hFile,addr @BitFore,sizeof BITMAPINFOHEADER,addr @WrittenBytes,NULL
-	invoke	WriteFile,@hFile,@lpbitmap,@DWSize,addr @WrittenBytes,NULL
-
-	invoke	GlobalUnlock,@hDIB;Decrements the lock count associated with a memory object that was allocated with GMEM_MOVEABLE. This function has no effect on memory objects allocated with GMEM_FIXED.
-	invoke	GlobalFree,@hDIB;Frees the specified global memory object and invalidates its handle.
-	invoke	CloseHandle,@hFile
-
-	invoke	DeleteDC,@hdcBmp
-	invoke	DeleteObject,@hBmpBuffer
-	invoke	ReleaseDC,_hWnd,@hdc
+	invoke _SaveBmpToFile, stPaint.hBitmap, _hWnd, offset szFileNameBuffer
+	invoke ReleaseDC, _hWnd, @hdc
 	ret
 _MySaveFile endp
 
@@ -149,7 +75,7 @@ local @tempBmp:HBITMAP
 	invoke	CreateCompatibleBitmap,@hdc,WINDOW_WIDTH,WINDOW_HEIGHT
 	mov		@tempBmp,eax
 	invoke	SelectObject,@tempDC,@tempBmp
-	invoke	BitBlt,@tempDC,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,dBuffer,0,0,SRCCOPY
+	invoke	BitBlt,@tempDC,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,stPaint.hMemDC,0,0,SRCCOPY
 
 	invoke	LoadImage,hInstance,addr szFileNameBuffer,IMAGE_BITMAP,0,0,LR_LOADFROMFILE 
 	.if (!eax)
@@ -160,7 +86,7 @@ local @tempBmp:HBITMAP
 	mov		@hBmp,HBITMAP ptr eax
 	invoke	SelectObject,@hdcBmp,@hBmp
 	invoke	BitBlt,@tempDC,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,@hdcBmp,0,0,SRCCOPY
-	invoke	BitBlt,dBuffer,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,@tempDC,0,0,SRCCOPY
+	invoke	BitBlt,stPaint.hMemDC,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,@tempDC,0,0,SRCCOPY
     
 	invoke	DeleteDC,@hdcBmp
 	invoke	DeleteDC,@tempDC
@@ -213,7 +139,7 @@ _ComparePos proc uses eax ebx,hPoint:POINT
 L2:
 	ret
 L1:
-	mov bMouseClick,FALSE
+	mov stPaint.bMouseDown,FALSE
 	ret
 _ComparePos endp
 
@@ -224,14 +150,14 @@ local	@hPen:HPEN
 	invoke	GetDC,_hWnd
 	mov		@hDc,eax
 	invoke	CreateCompatibleDC,@hDc
-	mov		dBuffer,eax
+	mov		stPaint.hMemDC,eax
 	invoke	CreateCompatibleBitmap,@hDc,WINDOW_WIDTH,WINDOW_HEIGHT
 	mov		@hBitMap,eax
-	invoke	SelectObject,dBuffer,@hBitMap
+	invoke	SelectObject,stPaint.hMemDC,@hBitMap
 	invoke	GetStockObject,NULL_PEN
 	mov		@hPen,eax
-	invoke	SelectObject,dBuffer,@hPen
-	invoke	Rectangle,dBuffer,0,0,WINDOW_WIDTH,WINDOW_HEIGHT
+	invoke	SelectObject,stPaint.hMemDC,@hPen
+	invoke	Rectangle,stPaint.hMemDC,0,0,WINDOW_WIDTH,WINDOW_HEIGHT
 	invoke	ReleaseDC,_hWnd,@hDc
 	ret
 _CreateBuffer endp
@@ -262,65 +188,83 @@ local	@stRect: RECT
 	.elseif eax == WM_CREATE
 		invoke	_CreateBuffer,_hWnd
 		invoke	_CreateColorBox,hInstance,_hWnd,0
+		invoke	GetClientRect, _hWnd, addr @stRect
+		
+		mov	ebx, @stRect.right
+		sub ebx, @stRect.left
+		mov stPaint.dwWidth, ebx
+		
+		mov ebx, @stRect.bottom
+		sub ebx, @stRect.top
+		mov stPaint.dwHeight, ebx
+
+		invoke GetDC, _hWnd
+		mov @hDc, eax
+
+		invoke CreateCompatibleDC, @hDc
+		mov stPaint.hMemDC, eax
+
+		invoke CreateCompatibleBitmap, @hDc, stPaint.dwWidth, stPaint.dwHeight
+		mov stPaint.hBitmap, eax
+
+		invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
+		invoke GetStockObject, WHITE_BRUSH
+		invoke SelectObject, stPaint.hMemDC, eax
+		invoke GetStockObject, WHITE_PEN
+		invoke SelectObject, stPaint.hMemDC, eax		
+		invoke Rectangle, stPaint.hMemDC, 0, 0, stPaint.dwWidth, stPaint.dwHeight;TODO whether bug?
+		invoke GetStockObject, WHITE_BRUSH
+		invoke SelectObject, stPaint.hMemDC, eax
+		invoke GetStockObject, BLACK_PEN
+		invoke SelectObject, stPaint.hMemDC, eax
 
 	.elseif eax == WM_PAINT
 		mov	ebx,_hWnd
 		.if ebx == hWinMain
 			invoke	BeginPaint,_hWnd,addr @stPs
 			mov		@hDc,eax
-			invoke	BitBlt,@hDc,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,dBuffer,0,0,SRCCOPY
+			invoke	BitBlt,@hDc,0,0,stPaint.dwWidth, stPaint.dwHeight ,stPaint.hMemDC ,0,0,SRCCOPY
 			invoke	EndPaint,_hWnd,addr @stPs
 		.endif
 
 	.elseif eax == WM_LBUTTONDOWN
 		mov eax,_lParam
 		and eax,0FFFFh
-		mov stHitPoint.x,eax
+		mov stPaint.stPtStart.x,eax
 		mov eax,_lParam
 		shr eax,16
-		mov stHitPoint.y,eax
-		mov bMouseClick,TRUE
+		mov stPaint.stPtStart.y,eax
+		mov stPaint.bMouseDown,TRUE
 		
-		mov ebx, stHitPoint.x
-		mov @stRect.left, ebx
-		add ebx, 100
-		mov @stRect.right, ebx
-		mov ebx, stHitPoint.y
-		mov @stRect.top, ebx
-		add ebx,100
-		mov @stRect.bottom, ebx
-		invoke _SaveScreenToBmp, addr @stRect, _hWnd
-		mov @hBitmap, eax
-		invoke _GetSaveFileName, offset szFileNameBuffer 
-		invoke _SaveBmpToFile, @hBitmap, _hWnd, offset szFileNameBuffer
+		
 
 	.elseif eax == WM_MOUSEMOVE
 		mov eax,_lParam
 		and eax,0FFFFh
-		mov stMovPoint.x,eax
+		mov stPaint.stPtEnd.x,eax
 		mov eax,_lParam
 		shr eax,16
-		mov stMovPoint.y,eax
-		invoke _ComparePos,stMovPoint
-		.if bMouseClick == TRUE
+		mov stPaint.stPtEnd.y,eax
+		invoke _ComparePos,stPaint.stPtEnd
+		.if stPaint.bMouseDown == TRUE
 			invoke	CreatePen,PS_SOLID,1,dwCurColor
 			mov		@hPen,eax
-			invoke	SelectObject,dBuffer,@hPen
-			invoke	MoveToEx,dBuffer,stHitPoint.x,stHitPoint.y,NULL
-			invoke	LineTo,dBuffer,stMovPoint.x,stMovPoint.y
+			invoke	SelectObject,stPaint.hMemDC,@hPen
+			invoke	MoveToEx,stPaint.hMemDC,stPaint.stPtStart.x,stPaint.stPtStart.y,NULL
+			invoke	LineTo,stPaint.hMemDC,stPaint.stPtEnd.x,stPaint.stPtEnd.y
 								
-			push	stMovPoint.x
-			push	stMovPoint.y
-			pop		stHitPoint.y
-			pop		stHitPoint.x
+			push	stPaint.stPtEnd.x
+			push	stPaint.stPtEnd.y
+			pop		stPaint.stPtStart.y
+			pop		stPaint.stPtStart.x
 			invoke	DeleteObject,@hPen
 			invoke	InvalidateRect,_hWnd,0,FALSE
 			invoke	UpdateWindow,_hWnd
 		.endif
 
 	.elseif eax == WM_LBUTTONUP
-		.if bMouseClick == TRUE			
-			mov bMouseClick,FALSE
+		.if stPaint.bMouseDown == TRUE			
+			mov stPaint.bMouseDown,FALSE
 		.endif
 
 	.elseif eax == WM_COMMAND
