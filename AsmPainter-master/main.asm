@@ -41,16 +41,13 @@ include ColorBox.asm
 include	FileStream.asm
 
 _MySaveFile proc uses edx ebx _hWnd:HWND
-local @hdc:HDC
-local @stRect: RECT
-local @hBitmap: HBITMAP
 	invoke _GetSaveFileName, offset szFileNameBuffer 
 	.if  (!eax)
 		ret
 	.endif
 	;没有必要检查结尾,因为windows会自动补全.bmp
 	invoke _SaveBmpToFile, stPaint.hBitmap, _hWnd, offset szFileNameBuffer
-	invoke ReleaseDC, _hWnd, @hdc
+
 	ret
 _MySaveFile endp
 
@@ -223,6 +220,7 @@ local	@stRect: RECT
 		.if ebx == hWinMain
 			invoke	BeginPaint,_hWnd,addr @stPs
 			mov		@hDc,eax
+			invoke	SelectObject, stPaint.hMemDC, stPaint.hBitmap
 			invoke	BitBlt,@hDc,0,0,stPaint.dwWidth, stPaint.dwHeight ,stPaint.hMemDC ,0,0,SRCCOPY
 			invoke	EndPaint,_hWnd,addr @stPs
 		.endif
@@ -357,6 +355,7 @@ local	@stMsg:MSG
 _WinMain endp
 
 start:
+	or eax,eax
 	call _WinMain
 	invoke ExitProcess,NULL
 end start

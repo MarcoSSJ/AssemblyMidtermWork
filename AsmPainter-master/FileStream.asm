@@ -329,6 +329,7 @@ local @bmp: BITMAP
 	shr eax, 3
 	mov ebx, [esi].bmiHeader.biHeight
 	mul ebx
+	mov [esi].bmiHeader.biSizeImage, eax
 
 	mov di, @wColorBit
 	.if di < 24
