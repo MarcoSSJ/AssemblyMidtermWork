@@ -75,6 +75,7 @@ ID_SHAPE_CIRCLE         equ         40014
 ID_SHAPE_RECTANGLE      equ         40015
 ID_SHAPE_LINE           equ         40016
 ID_SHAPE_PENCIL         equ         40017
+ID_COLOR_SELECT			equ			40018
 MAX_FILESIZE			equ			1000
 WINDOW_WIDTH			equ			800
 WINDOW_HEIGHT			equ			600
@@ -84,7 +85,6 @@ BUTTON_WIDTH			equ			40
 dwCurColor				dd			0
 bpenwidth				db			1
 bpentype				db			1;1£ºpencil, 2£ºcircle, 3:Rectangle, 4:line, default:pencil
-dwArrCustomColor		dd			16 dup(0)
 lpDwColors				dd			0h,\
 									0c0c0c0h,\
 									0808080h,\

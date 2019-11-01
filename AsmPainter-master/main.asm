@@ -82,7 +82,7 @@ local @myColor:CHOOSECOLOR
 	mov		eax,hInstance
 	mov		@myColor.hInstance,eax
 	mov		@myColor.rgbResult,0
-	mov		eax,offset dwArrCustomColor
+	mov		eax,offset lpDwColors
 	mov		@myColor.lpCustColors,eax
 	mov		@myColor.Flags,CC_FULLOPEN or CC_RGBINIT
 	mov		@myColor.lCustData,0
@@ -402,7 +402,10 @@ local	@stRect: RECT
 			mov bpenwidth,9
 		.elseif ax == ID_PEN_WIDTH10
 			mov bpenwidth,10
+		.elseif ax == ID_COLOR_SELECT
+			invoke _MySelectColor, _hWnd
 		.endif
+
 
 	.elseif eax == WM_CHANGE_COLOR
 		mov		eax,_lParam
