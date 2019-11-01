@@ -153,6 +153,7 @@ local	@hBrush:HBRUSH
 local	@hMenu: HMENU
 local	@hBitmap: HBITMAP
 local	@stRect: RECT
+local	@dwPickColor: dword
 
 	invoke	GetMenu, _hWnd
 	mov		@hMenu, eax
@@ -212,11 +213,19 @@ local	@stRect: RECT
 		mov eax,_lParam
 		shr eax,16
 		mov stPaint.stHitPoint.y,eax
-		mov stPaint.bMouseDown,TRUE
-		push stPaint.stHitPoint.x
-		push stPaint.stHitPoint.y
-		pop	stPaint.stLastMovPoint.y
-		pop	stPaint.stLastMovPoint.x
+		.if bpentype == PENTYPE_PICKCOLOR
+			invoke GetDC, _hWnd
+			mov @hDc, eax
+			invoke GetPixel, @hDc,  stPaint.stHitPoint.x, stPaint.stHitPoint.y;get pixel color
+			mov dwCurColor, eax
+			invoke SendMessage, hWndColor, WM_SELECT_COLOR, 0, eax
+		.else
+			mov stPaint.bMouseDown,TRUE
+			push stPaint.stHitPoint.x
+			push stPaint.stHitPoint.y
+			pop	stPaint.stLastMovPoint.y
+			pop	stPaint.stLastMovPoint.x
+		.endif
 
 	.elseif eax == WM_MOUSEMOVE
 		mov eax,_lParam
@@ -544,6 +553,8 @@ local	@stRect: RECT
 		.elseif ax == ID_COLOR_SELECT
 			invoke _MySelectColor, _hWnd
 			invoke SendMessage, hWndColor, WM_SELECT_COLOR, 0, dwCurColor
+		.elseif ax == ID_COLOR_PICK
+			mov bpentype, PENTYPE_PICKCOLOR
 		.endif
 
 	.elseif eax == WM_CHANGE_COLOR

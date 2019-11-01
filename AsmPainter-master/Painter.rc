@@ -84,6 +84,7 @@ BEGIN
     POPUP "Color"
     BEGIN
         MENUITEM "Select",                      ID_COLOR_SELECT
+        MENUITEM "Pick",                        ID_COLOR_PICK
     END
 END
 
