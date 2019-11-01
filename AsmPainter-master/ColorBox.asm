@@ -204,46 +204,6 @@ local @width:DWORD
 		invoke	GetWindowLong,_hWnd,GWL_HINSTANCE
 		mov		@hInsthWnd,eax
 		invoke	_CreateAllColorBtns, @hInsthWnd, _hWnd
-		;mov		ecx,COLORS_NUM
-		;mov		esi,0
-		;mov		edi,ecx
-		;shr		edi,1
-		;mov		@width,edi
-	;@@:
-		;.if esi < @width
-			;pushad
-			;mov		eax,esi
-			;shr		eax,2
-			;mov		ebx,COLOR_BUTTON_WIDTH
-			;mul		ebx
-			;invoke	CreateWindowEx,WS_EX_CLIENTEDGE,
-					;offset szColorBtnClass,0,WS_CHILD,
-					;eax,0,COLOR_BUTTON_WIDTH,COLOR_BUTTON_WIDTH,_hWnd,
-					;0,@hInsthWnd,dwColors[esi]
-			;mov		@hWndColor,eax
-			;mov		hWndColorBtns[esi], eax
-			;invoke	ShowWindow,@hWndColor,SW_NORMAL
-			;popad
-		;.else
-			;pushad
-			;mov		eax,esi
-			;sub		eax,edi
-			;shr		eax,2
-			;mov		ebx,COLOR_BUTTON_WIDTH
-			;mul		ebx; 40 * Buttonsize
-			;invoke	CreateWindowEx,WS_EX_CLIENTEDGE,
-					;offset szColorBtnClass,0,WS_CHILD,
-					;eax,COLOR_BUTTON_WIDTH,COLOR_BUTTON_WIDTH,COLOR_BUTTON_WIDTH,_hWnd,
-					;0,@hInsthWnd,dwColors[esi]
-			;mov		@hWndColor,eax
-			;mov		hWndColorBtns[esi], eax
-			;invoke	ShowWindow,@hWndColor,SW_NORMAL
-			;popad
-		;.endif
-		;add esi,4
-		;sub ecx,4
-		;cmp ecx,0
-		;jne @B
 	.elseif eax == WM_PAINT
 		invoke	BeginPaint,_hWnd,addr @ps
 		mov		@hdc, eax
