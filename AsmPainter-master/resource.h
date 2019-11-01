@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ Éú³ÉµÄ°üº¬ÎÄ¼þ¡£
-// ¹© Painter.rc Ê¹ÓÃ
+// Microsoft Visual C++ ï¿½ï¿½ï¿½ÉµÄ°ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
+// ï¿½ï¿½ Painter.rc Ê¹ï¿½ï¿½
 //
 #define IDR_MENU1                       101
 #define ID_FILE                         40001
@@ -21,9 +21,10 @@
 #define ID_SHAPE_LINE                   40016
 #define ID_SHAPE_PENCIL                 40017
 #define ID_SHAPE_EARSER                 40018
+#define ID_COLOR_SELECT                 40019
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        102
