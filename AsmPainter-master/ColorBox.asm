@@ -104,6 +104,7 @@ _WndColorBtnProc  endp
 
 _CloseAllColorBtns proc uses ebx ecx esi
 	mov		ecx,COLORS_NUM
+	shl		ecx,2
 	mov		esi,0
 	@@:
 		pushad
@@ -120,6 +121,7 @@ _CreateAllColorBtns proc uses ebx edx edi esi, _hInsthWnd, _hWnd
 local	@width: dword
 local	@hWndColor: HWND
 	mov		ecx,COLORS_NUM
+	shl		ecx,2
 	mov		esi,0
 	mov		edi,ecx
 	shr		edi,1
@@ -162,16 +164,49 @@ local	@hWndColor: HWND
 	ret
 _CreateAllColorBtns endp
 
+;return dword index of the color
+;0 if not found
+_SearchColorInColorBox proc uses ebx edi esi, _dwColor: dword
+	mov		ecx,COLORS_NUM
+	shl		ecx,2
+	mov		esi,4
+	mov		edi,ecx
+	shr		edi,1
+@@:
+	mov ebx, dwColors[esi]
+	.if _dwColor == ebx
+		mov eax, esi
+		shr eax, 2
+		ret
+	.endif
+	add esi,4
+	sub ecx,4
+	cmp ecx,0
+	jne @B
+	mov eax, 0
+	ret
+_SearchColorInColorBox endp 
+
 _UpdateColorBox	proc uses ebx edi esi, _dwColor: dword, _hInsthWnd, _hWnd
 local	@dwTmpColor: dword
+local	@dwEndOffset: dword
 	mov eax, dwColors
 	.if eax != _dwColor
 		invoke _CloseAllColorBtns
-
+		invoke _SearchColorInColorBox, _dwColor
+		.if eax != 0
+			shl eax, 2;index * 4 is offset
+			add eax, 4
+			mov @dwEndOffset, eax
+		.else
+			mov eax, COLORS_NUM
+			shl eax, 2
+			mov @dwEndOffset, eax
+		.endif
 		mov eax, _dwColor
 		mov @dwTmpColor, eax
 		;将新的颜色加入到dwColors中
-		mov		ecx,COLORS_NUM
+		mov		ecx,@dwEndOffset
 		mov		esi,0
 		@@:
 			mov ebx, dwColors[esi]
@@ -184,6 +219,7 @@ local	@dwTmpColor: dword
 			jne @B
 		invoke _CreateAllColorBtns, _hInsthWnd, _hWnd
 	.endif
+
 	ret
 _UpdateColorBox endp
 

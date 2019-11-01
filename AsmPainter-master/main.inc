@@ -117,7 +117,7 @@ dwColors				dd			0h,\
 									08080ffh,\
 									04080h,\
 									0ff0080h
-COLORS_NUM				equ			($ - offset dwColors)
+COLORS_NUM				equ			($ - offset dwColors) / 4
 
 .data?
 hInstance				dd			?
