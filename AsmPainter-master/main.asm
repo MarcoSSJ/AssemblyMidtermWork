@@ -227,6 +227,8 @@ local	@stRect: RECT
 		invoke _ComparePos,stPaint.stMovPoint
 		.if stPaint.bMouseDown == TRUE
 			.if bpentype == 1
+				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
+
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
 				mov		@hPen,eax
 				invoke	SelectObject,stPaint.hMemDC,@hPen
