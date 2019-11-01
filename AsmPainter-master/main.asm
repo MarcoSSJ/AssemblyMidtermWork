@@ -82,7 +82,7 @@ local @myColor:CHOOSECOLOR
 	mov		eax,hInstance
 	mov		@myColor.hInstance,eax
 	mov		@myColor.rgbResult,0
-	mov		eax,offset lpDwColors
+	mov		eax,offset dwColors
 	mov		@myColor.lpCustColors,eax
 	mov		@myColor.Flags,CC_FULLOPEN or CC_RGBINIT
 	mov		@myColor.lCustData,0
@@ -164,6 +164,7 @@ local	@stRect: RECT
 	.elseif eax == WM_CREATE
 		invoke	_CreateBuffer,_hWnd
 		invoke	_CreateColorBox,hInstance,_hWnd,0
+		mov		hWndColor,	eax
 		invoke	GetClientRect, _hWnd, addr @stRect
 
 		mov	ebx, @stRect.right
@@ -404,6 +405,7 @@ local	@stRect: RECT
 			mov bpenwidth,10
 		.elseif ax == ID_COLOR_SELECT
 			invoke _MySelectColor, _hWnd
+			invoke SendMessage, hWndColor, WM_SELECT_COLOR, 0, dwCurColor
 		.endif
 
 
