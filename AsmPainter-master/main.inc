@@ -42,6 +42,18 @@ include comdlg32.inc
 includelib comdlg32.lib
 include msvcrt.inc
 includelib msvcrt.lib
+PAINTINFO STRUCT
+  stHitPoint				POINT		<>
+  stMovPoint				POINT		<>
+  stLastMovPoint			POINT		<>
+  stReleasePoint			POINT		<>
+	bMouseDown	byte	0
+	hBitmap		HBITMAP	?
+	hMemDC		HDC		?
+	dwWidth		DWORD	?
+	dwHeight	DWORD	?
+PAINTINFO ENDS
+
 
 WM_CHANGE_COLOR			equ			WM_USER + 1
 IDR_MENU1               equ			101
@@ -67,7 +79,7 @@ WINDOW_WIDTH			equ			800
 WINDOW_HEIGHT			equ			600
 BUTTON_WIDTH			equ			40
 .data
-bMouseClick				db			FALSE
+;bMouseClick				db			FALSE
 dwCurColor				dd			0
 bpenwidth				db			1
 bpentype				db			1;1£ºpencil, 2£ºcircle, 3:Rectangle, 4:line, default:pencil
@@ -100,17 +112,18 @@ COLORS_NUM				equ			($ - offset lpDwColors)
 
 .data?
 hInstance				dd			?
-hWinMain				dd			? 
+hWinMain				dd			?
 hWndSendTo				dd			?
 hMenu					dd			?
 hAccelerator			dd			?
-dBuffer					dd			?
-stHitPoint				POINT		<>
-stLastMovPoint			POINT		<>
-stMovPoint				POINT		<>
-stReleasePoint			POINT		<>
-szFileNameBuffer		db			MAX_FILESIZE DUP(?)
 
+;dBuffer					dd			?
+;stHitPoint				POINT		<>
+;stLastMovPoint			POINT		<>
+;stMovPoint				POINT		<>
+;stReleasePoint			POINT		<>
+szFileNameBuffer		db			MAX_FILESIZE DUP(?)
+stPaint		PAINTINFO	<>
 
 .const
 szClassName				db			'MyClass',0
