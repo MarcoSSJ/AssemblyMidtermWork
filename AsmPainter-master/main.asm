@@ -53,21 +53,34 @@ _MySaveFile endp
 
 _MyOpenFile proc _hWnd:HWND
 local @hDC:HDC
+local @hTmpDC: HDC
+local @hTmpBmp:HBITMAP
 
 	invoke _GetOpenFileName, offset szFileNameBuffer
 	.if (!eax)
 		ret
 	.endif
-	; 成功打开，初始化环境，load 进来
+
 	invoke GetDC, _hWnd
 	mov @hDC, eax
+    invoke CreateCompatibleDC,@hDC
+    mov @hTmpDC,eax
+    invoke CreateCompatibleBitmap,@hDC,stPaint.dwWidth, stPaint.dwHeight
+    mov @hTmpBmp,eax
+    invoke SelectObject,@hTmpDC,@hTmpBmp
+    invoke BitBlt,@hTmpDC,0,0, stPaint.dwWidth, stPaint.dwHeight,stPaint.hMemDC,0,0,SRCCOPY
 
 	invoke LoadImage, NULL, offset szFileNameBuffer, IMAGE_BITMAP, 0,0,
 				LR_LOADFROMFILE or LR_CREATEDIBSECTION
-	mov stPaint.hBitmap, eax
-	invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
-	invoke BitBlt, @hDC, 0, 0, stPaint.dwWidth, stPaint.dwHeight, stPaint.hMemDC, 0, 0, SRCCOPY
+	mov @hTmpBmp, eax
+	invoke SelectObject, @hTmpDC, @hTmpBmp
+	invoke BitBlt, stPaint.hMemDC, 0, 0, stPaint.dwWidth, stPaint.dwHeight, @hTmpDC, 0, 0, SRCCOPY
+	invoke BitBlt, @hDC , 0, 0, stPaint.dwWidth, stPaint.dwHeight, stPaint.hMemDC, 0, 0, SRCCOPY
 
+
+    invoke DeleteDC,@hTmpDC
+    invoke DeleteObject,@hTmpBmp
+    invoke ReleaseDC,_hWnd, @hDC
 	invoke	InvalidateRect, _hWnd, 0, FALSE
 	invoke	UpdateWindow, _hWnd
 	ret
