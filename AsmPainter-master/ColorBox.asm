@@ -93,7 +93,7 @@ local	@rt:RECT
 		mov		ebx,eax
 		invoke	SendMessage,ebx,WM_CHANGE_COLOR,0,@color;传递WM_CHANGE_COLOR信号
 	.elseif eax == WM_DESTROY
-		;invoke	PostQuitMessage,NULL 这个是主窗口用的
+		nop
 	.else
 		invoke	DefWindowProc,_hWnd,_stMsg,_wParam,_lParam
 		ret
@@ -101,92 +101,6 @@ local	@rt:RECT
 	mov eax,0
 	ret
 _WndColorBtnProc  endp
-
-_CloseAllColorBtns proc uses ebx ecx esi
-	mov		ecx,COLORS_NUM
-	mov		esi,0
-	@@:
-		pushad
-		invoke SendMessage, hWndColorBtns[esi], WM_CLOSE, NULL, NULL
-		popad
-		add esi,4
-		sub ecx,4
-		cmp ecx,0
-		jne @B
-	ret
-_CloseAllColorBtns endp
-
-_CreateAllColorBtns proc uses ebx edx edi esi, _hInsthWnd, _hWnd
-local	@width: dword
-local	@hWndColor: HWND
-	mov		ecx,COLORS_NUM
-	mov		esi,0
-	mov		edi,ecx
-	shr		edi,1
-	mov		@width,edi
-@@:
-	.if esi < @width
-		pushad
-		mov		eax,esi
-		shr		eax,2
-		mov		ebx,COLOR_BUTTON_WIDTH
-		mul		ebx
-		invoke	CreateWindowEx,WS_EX_CLIENTEDGE,
-				offset szColorBtnClass,0,WS_CHILD,
-				eax,0,COLOR_BUTTON_WIDTH,COLOR_BUTTON_WIDTH,_hWnd,
-				0,_hInsthWnd,dwColors[esi]
-		mov		@hWndColor,eax
-		mov		hWndColorBtns[esi], eax
-		invoke	ShowWindow,@hWndColor,SW_NORMAL
-		popad
-	.else
-		pushad
-		mov		eax,esi
-		sub		eax,edi
-		shr		eax,2
-		mov		ebx,COLOR_BUTTON_WIDTH
-		mul		ebx; 40 * Buttonsize
-		invoke	CreateWindowEx,WS_EX_CLIENTEDGE,
-				offset szColorBtnClass,0,WS_CHILD,
-				eax,COLOR_BUTTON_WIDTH,COLOR_BUTTON_WIDTH,COLOR_BUTTON_WIDTH,_hWnd,
-				0,_hInsthWnd,dwColors[esi]
-		mov		@hWndColor,eax
-		mov		hWndColorBtns[esi], eax
-		invoke	ShowWindow,@hWndColor,SW_NORMAL
-		popad
-	.endif
-	add esi,4
-	sub ecx,4
-	cmp ecx,0
-	jne @B
-	ret
-_CreateAllColorBtns endp
-
-_UpdateColorBox	proc uses ebx edi esi, _dwColor: dword, _hInsthWnd, _hWnd
-local	@dwTmpColor: dword
-	mov eax, dwColors
-	.if eax != _dwColor
-		invoke _CloseAllColorBtns
-
-		mov eax, _dwColor
-		mov @dwTmpColor, eax
-		;将新的颜色加入到dwColors中
-		mov		ecx,COLORS_NUM
-		mov		esi,0
-		@@:
-			mov ebx, dwColors[esi]
-			mov eax, @dwTmpColor
-			mov dwColors[esi], eax
-			mov @dwTmpColor, ebx
-			add esi,4
-			sub ecx,4
-			cmp ecx,0
-			jne @B
-		invoke _CreateAllColorBtns, _hInsthWnd, _hWnd
-	.endif
-	ret
-_UpdateColorBox endp
-
 
 ;色彩板对应的事件循环,创建时会创建24个色彩格子
 _WndColorBoxProc proc  uses ebx edi esi,_hWnd,_stMsg,_wParam,_lParam
@@ -203,17 +117,50 @@ local @width:DWORD
 		mov		hWndSendTo,eax
 		invoke	GetWindowLong,_hWnd,GWL_HINSTANCE
 		mov		@hInsthWnd,eax
-		invoke	_CreateAllColorBtns, @hInsthWnd, _hWnd
+		mov		ecx,COLORS_NUM
+		mov		esi,0
+		mov		edi,ecx
+		shr		edi,1
+		mov		@width,edi
+	@@:
+		.if esi < @width
+			pushad
+			mov		eax,esi
+			shr		eax,2
+			mov		ebx,BUTTON_WIDTH
+			mul		ebx
+			invoke	CreateWindowEx,WS_EX_CLIENTEDGE,
+					offset szColorBtnClass,0,WS_CHILD,
+					eax,0,BUTTON_WIDTH,BUTTON_WIDTH,_hWnd,
+					0,@hInsthWnd,lpDwColors[esi]
+			mov		@hWndColor,eax
+			invoke	ShowWindow,@hWndColor,SW_NORMAL
+			popad
+		.else
+			pushad
+			mov		eax,esi
+			sub		eax,edi
+			shr		eax,2
+			mov		ebx,BUTTON_WIDTH
+			mul		ebx; 40 * Buttonsize
+			invoke	CreateWindowEx,WS_EX_CLIENTEDGE,
+					offset szColorBtnClass,0,WS_CHILD,
+					eax,BUTTON_WIDTH,BUTTON_WIDTH,BUTTON_WIDTH,_hWnd,
+					0,@hInsthWnd,lpDwColors[esi]
+			mov		@hWndColor,eax
+			invoke	ShowWindow,@hWndColor,SW_NORMAL
+			popad
+		.endif
+		add esi,4
+		sub ecx,4
+		cmp ecx,0
+		jne @B
 	.elseif eax == WM_PAINT
 		invoke	BeginPaint,_hWnd,addr @ps
 		mov		@hdc, eax
 		invoke	EndPaint,_hWnd,addr @ps
 	.elseif eax == WM_CHANGE_COLOR
 		invoke	SendMessage,hWndSendTo,_stMsg,_wParam,_lParam;;传递WM_CHANGE_COLOR信号
-	.elseif eax == WM_SELECT_COLOR
-		invoke	GetWindowLong,_hWnd,GWL_HINSTANCE
-		mov		@hInsthWnd,eax
-		invoke	_UpdateColorBox, _lParam, @hInsthWnd, _hWnd
 	.elseif eax == WM_DESTROY
 		nop
 	.else
