@@ -299,6 +299,7 @@ local	@stRect: RECT
 				invoke	SelectObject,stPaint.hMemDC,@hBrush
 				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
 				invoke	LineTo,stPaint.hMemDC,stPaint.stLastMovPoint.x,stPaint.stLastMovPoint.y
+				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
 				invoke	LineTo,stPaint.hMemDC,stPaint.stMovPoint.x,stPaint.stMovPoint.y
 
 				push	stPaint.stMovPoint.x
@@ -322,6 +323,73 @@ local	@stRect: RECT
 				push	stPaint.stMovPoint.y
 				pop		stPaint.stHitPoint.y
 				pop		stPaint.stHitPoint.x
+				invoke	DeleteObject,@hPen
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 6
+				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
+
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	CreateSolidBrush,dwCurColor
+				mov		@hBrush,eax
+
+				invoke	SelectObject,stPaint.hMemDC,@hPen
+				invoke	SelectObject,stPaint.hMemDC,@hBrush
+				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
+				invoke	Ellipse,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stLastMovPoint.x,stPaint.stLastMovPoint.y
+				invoke	Ellipse,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stMovPoint.x,stPaint.stMovPoint.y
+
+				push	stPaint.stMovPoint.x
+				push	stPaint.stMovPoint.y
+				pop		stPaint.stLastMovPoint.y
+				pop		stPaint.stLastMovPoint.x
+
+				invoke	DeleteObject,@hPen
+				invoke	DeleteObject,@hBrush
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 7
+				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
+
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	CreateSolidBrush,dwCurColor
+				mov		@hBrush,eax
+
+				invoke	SelectObject,stPaint.hMemDC,@hPen
+				invoke	SelectObject,stPaint.hMemDC,@hBrush
+				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
+				invoke	Rectangle,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stLastMovPoint.x,stPaint.stLastMovPoint.y
+				invoke	Rectangle,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stMovPoint.x,stPaint.stMovPoint.y
+
+				push	stPaint.stMovPoint.x
+				push	stPaint.stMovPoint.y
+				pop		stPaint.stLastMovPoint.y
+				pop		stPaint.stLastMovPoint.x
+
+				invoke	DeleteObject,@hPen
+				invoke	DeleteObject,@hBrush
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 8
+				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
+
+				invoke	CreatePen,PS_DOT,bpenwidth,dwCurColor
+				mov		@hPen,eax
+
+				invoke	SelectObject,stPaint.hMemDC,@hPen
+				invoke	SelectObject,stPaint.hMemDC,@hBrush
+				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
+				invoke	LineTo,stPaint.hMemDC,stPaint.stLastMovPoint.x,stPaint.stLastMovPoint.y
+				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
+				invoke	LineTo,stPaint.hMemDC,stPaint.stMovPoint.x,stPaint.stMovPoint.y
+
+				push	stPaint.stMovPoint.x
+				push	stPaint.stMovPoint.y
+				pop		stPaint.stLastMovPoint.y
+				pop		stPaint.stLastMovPoint.x
+
 				invoke	DeleteObject,@hPen
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
@@ -382,6 +450,50 @@ local	@stRect: RECT
 				invoke	DeleteObject,@hPen
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 6;circle
+				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
+
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	CreateSolidBrush,dwCurColor
+				mov		@hBrush,eax
+				invoke	SelectObject,stPaint.hMemDC,@hPen
+				invoke	SelectObject,stPaint.hMemDC,@hBrush
+				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
+				invoke	Ellipse,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stReleasePoint.x,stPaint.stReleasePoint.y
+
+				invoke	DeleteObject,@hPen
+				invoke	DeleteObject,@hBrush
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 7;rectangle
+				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
+
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	CreateSolidBrush,dwCurColor
+				mov		@hBrush,eax
+				invoke	SelectObject,stPaint.hMemDC,@hPen
+				invoke	SelectObject,stPaint.hMemDC,@hBrush
+				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
+				invoke	Rectangle,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stReleasePoint.x,stPaint.stReleasePoint.y
+
+				invoke	DeleteObject,@hPen
+				invoke	DeleteObject,@hBrush
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 8;line
+				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
+
+				invoke	CreatePen,PS_DOT,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	SelectObject,stPaint.hMemDC,@hPen
+				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
+				invoke	LineTo,stPaint.hMemDC,stPaint.stReleasePoint.x,stPaint.stReleasePoint.y
+
+				invoke	DeleteObject,@hPen
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
 			.endif
 		.endif
 
@@ -402,6 +514,12 @@ local	@stRect: RECT
 			mov bpentype,4
 		.elseif ax == ID_SHAPE_EARSER
 			mov bpentype,5
+		.elseif ax == ID_SHAPE_CIRCLE40019
+			mov bpentype,6
+		.elseif ax == ID_SHAPE_RECTANGLE40020
+			mov bpentype,7
+		.elseif ax == ID_SHAPE_DOT
+			mov bpentype,8
 
 		.elseif ax == ID_PEN_WIDTH1
 			mov bpenwidth,1
@@ -427,7 +545,6 @@ local	@stRect: RECT
 			invoke _MySelectColor, _hWnd
 			invoke SendMessage, hWndColor, WM_SELECT_COLOR, 0, dwCurColor
 		.endif
-
 
 	.elseif eax == WM_CHANGE_COLOR
 		mov		eax,_lParam

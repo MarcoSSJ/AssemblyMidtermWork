@@ -77,7 +77,10 @@ ID_SHAPE_RECTANGLE      equ         40015
 ID_SHAPE_LINE           equ         40016
 ID_SHAPE_PENCIL         equ         40017
 ID_SHAPE_EARSER         equ         40018
-ID_COLOR_SELECT			equ			40019
+ID_SHAPE_CIRCLE40019    equ         40019
+ID_SHAPE_RECTANGLE40020 equ         40020
+ID_SHAPE_DOT            equ         40021
+ID_COLOR_SELECT			equ			40022
 MAX_FILESIZE			equ			1000
 WINDOW_WIDTH			equ			800
 WINDOW_HEIGHT			equ			600
