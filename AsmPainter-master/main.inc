@@ -56,6 +56,7 @@ PAINTINFO ENDS
 
 
 WM_CHANGE_COLOR			equ			WM_USER + 1
+WM_SELECT_COLOR			equ			WM_USER + 2
 IDR_MENU1               equ			101
 IDM_OPEN				equ			40001
 IDM_SAVE				equ			40002
@@ -76,20 +77,17 @@ ID_SHAPE_RECTANGLE      equ         40015
 ID_SHAPE_LINE           equ         40016
 ID_SHAPE_PENCIL         equ         40017
 ID_SHAPE_EARSER         equ         40018
-ID_SHAPE_CIRCLE40019    equ         40019
-ID_SHAPE_RECTANGLE40020 equ         40020
-ID_SHAPE_DOT            equ         40021
+ID_COLOR_SELECT			equ			40019
 MAX_FILESIZE			equ			1000
 WINDOW_WIDTH			equ			800
 WINDOW_HEIGHT			equ			600
-BUTTON_WIDTH			equ			40
+COLOR_BUTTON_WIDTH		equ			40
 .data
 ;bMouseClick				db			FALSE
 dwCurColor				dd			0
 bpenwidth				db			1
 bpentype				db			1;1£ºpencil, 2£ºcircle, 3:Rectangle, 4:line, default:pencil
-dwArrCustomColor		dd			16 dup(0)
-lpDwColors				dd			0h,\
+dwColors				dd			0h,\
 									0c0c0c0h,\
 									0808080h,\
 									0ff0000h,\
@@ -113,14 +111,17 @@ lpDwColors				dd			0h,\
 									08080ffh,\
 									04080h,\
 									0ff0080h
-COLORS_NUM				equ			($ - offset lpDwColors)
+COLORS_NUM				equ			($ - offset dwColors)
 
 .data?
 hInstance				dd			?
 hWinMain				dd			?
 hWndSendTo				dd			?
+hWndColor				dd			?
 hMenu					dd			?
 hAccelerator			dd			?
+hWndColorBtns			dd			COLORS_NUM dup(?)
+
 
 ;dBuffer					dd			?
 ;stHitPoint				POINT		<>

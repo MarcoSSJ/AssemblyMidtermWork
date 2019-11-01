@@ -1,7 +1,5 @@
 // Microsoft Visual C++ generated resource script.
 //
-#pragma code_page(65001)
-
 #include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
@@ -15,10 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 涓枃(绠�浣擄紝涓浗) resources
+// 中文(简体，中国) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -78,13 +77,14 @@ BEGIN
         MENUITEM "Line",                        ID_SHAPE_LINE
         MENUITEM "Pencil",                      ID_SHAPE_PENCIL
         MENUITEM "Earser",                      ID_SHAPE_EARSER
-        MENUITEM "Circle(filled)",              ID_SHAPE_CIRCLE40019
-        MENUITEM "Rectangle(filled)",           ID_SHAPE_RECTANGLE40020
-        MENUITEM "Dot line",                    ID_SHAPE_DOT
+    END
+    POPUP "Color"
+    BEGIN
+        MENUITEM "select",                      ID_COLOR_SELECT
     END
 END
 
-#endif    // 涓枃(绠�浣擄紝涓浗) resources
+#endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
