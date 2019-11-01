@@ -373,6 +373,8 @@ local	@stRect: RECT
 		.elseif ax == ID_FILE_OPENFILE
 			invoke _MyOpenFile,_hWnd
 
+		.elseif ax == ID_SHAPE_PENCIL
+			mov bpentype,1
 		.elseif ax == ID_SHAPE_CIRCLE
 			mov bpentype,2
 		.elseif ax == ID_SHAPE_RECTANGLE
