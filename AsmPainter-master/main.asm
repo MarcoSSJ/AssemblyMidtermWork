@@ -306,6 +306,22 @@ local	@stRect: RECT
 				invoke	DeleteObject,@hPen
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
+			.elseif bpentype == 5
+				invoke	SetROP2,stPaint.hMemDC,R2_WHITE
+
+				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+				mov		@hPen,eax
+				invoke	SelectObject,stPaint.hMemDC,@hPen
+				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
+				invoke	LineTo,stPaint.hMemDC,stPaint.stMovPoint.x,stPaint.stMovPoint.y
+
+				push	stPaint.stMovPoint.x
+				push	stPaint.stMovPoint.y
+				pop		stPaint.stHitPoint.y
+				pop		stPaint.stHitPoint.x
+				invoke	DeleteObject,@hPen
+				invoke	InvalidateRect,_hWnd,0,FALSE
+				invoke	UpdateWindow,_hWnd
 			.endif
 		.endif
 
@@ -381,6 +397,8 @@ local	@stRect: RECT
 			mov bpentype,3
 		.elseif ax == ID_SHAPE_LINE
 			mov bpentype,4
+		.elseif ax == ID_SHAPE_EARSER
+			mov bpentype,5
 
 		.elseif ax == ID_PEN_WIDTH1
 			mov bpenwidth,1

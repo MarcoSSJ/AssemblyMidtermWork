@@ -75,6 +75,7 @@ ID_SHAPE_CIRCLE         equ         40014
 ID_SHAPE_RECTANGLE      equ         40015
 ID_SHAPE_LINE           equ         40016
 ID_SHAPE_PENCIL         equ         40017
+ID_SHAPE_EARSER         equ         40018
 MAX_FILESIZE			equ			1000
 WINDOW_WIDTH			equ			800
 WINDOW_HEIGHT			equ			600
