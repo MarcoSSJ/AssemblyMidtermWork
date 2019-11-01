@@ -52,46 +52,24 @@ _MySaveFile proc uses edx ebx _hWnd:HWND
 _MySaveFile endp
 
 _MyOpenFile proc _hWnd:HWND
-local @hdc:HDC
-local @hdcBmp:HDC
-local @hBmp:HBITMAP
-local @tempDC:HDC
-local @tempBmp:HBITMAP
+local @hDC:HDC
 
 	invoke _GetOpenFileName, offset szFileNameBuffer
 	.if (!eax)
 		ret
 	.endif
 	; 成功打开，初始化环境，load 进来
-	invoke	GetDC,_hWnd
-	mov		@hdc,eax
-	invoke	CreateCompatibleDC,@hdc
-	mov		@tempDC,eax
-	invoke	CreateCompatibleDC,@hdc
-	mov		@hdcBmp,eax
-	invoke	CreateCompatibleBitmap,@hdc,WINDOW_WIDTH,WINDOW_HEIGHT
-	mov		@tempBmp,eax
-	invoke	SelectObject,@tempDC,@tempBmp
-	invoke	BitBlt,@tempDC,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,stPaint.hMemDC,0,0,SRCCOPY
+	invoke GetDC, _hWnd
+	mov @hDC, eax
 
-	invoke	LoadImage,hInstance,addr szFileNameBuffer,IMAGE_BITMAP,0,0,LR_LOADFROMFILE 
-	.if (!eax)
-		ret
-	.endif
+	invoke LoadImage, NULL, offset szFileNameBuffer, IMAGE_BITMAP, 0,0,
+				LR_LOADFROMFILE or LR_CREATEDIBSECTION
+	mov stPaint.hBitmap, eax
+	invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
+	invoke BitBlt, @hDC, 0, 0, stPaint.dwWidth, stPaint.dwHeight, stPaint.hMemDC, 0, 0, SRCCOPY
 
-	
-	mov		@hBmp,HBITMAP ptr eax
-	invoke	SelectObject,@hdcBmp,@hBmp
-	invoke	BitBlt,@tempDC,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,@hdcBmp,0,0,SRCCOPY
-	invoke	BitBlt,stPaint.hMemDC,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,@tempDC,0,0,SRCCOPY
-    
-	invoke	DeleteDC,@hdcBmp
-	invoke	DeleteDC,@tempDC
-	invoke	DeleteObject,@tempBmp
-	invoke	ReleaseDC,_hWnd,@hdc
-
-	invoke	InvalidateRect,_hWnd,0,FALSE
-	invoke	UpdateWindow,_hWnd
+	invoke	InvalidateRect, _hWnd, 0, FALSE
+	invoke	UpdateWindow, _hWnd
 	ret
 _MyOpenFile endp
 
