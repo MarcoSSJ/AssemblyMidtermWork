@@ -332,6 +332,11 @@ local	@dwPickColor: dword
 
 	.elseif eax == WM_COMMAND
 		mov eax,_wParam
+		;若未使用选区,则取消
+		.if ax > ID_REGION_MOVE || ax < ID_REGION_SET
+			mov bInRegion, FALSE
+		.endif
+
 		.if ax == ID_FILE_SAVE
 			invoke _MySaveFile,_hWnd
 		.elseif ax == ID_FILE_OPENFILE
@@ -386,32 +391,36 @@ local	@dwPickColor: dword
 		.elseif ax == ID_REGION_SET
 			mov bInRegion, 1
 		.elseif ax == ID_REGION_SAVE
-			invoke _BrushWhiteBg, offset stRegion
-			invoke	InvalidateRect, _hWnd, 0, FALSE
-			invoke	UpdateWindow, _hWnd
-			mov stRegion.bMouseDown, TRUE
-			invoke SendMessage, hWinMain, WM_REGION_SAVEFILE, 0, 0
+			.if bInRegion == TRUE
+				invoke _BrushWhiteBg, offset stRegion
+				invoke	InvalidateRect, _hWnd, 0, FALSE
+				invoke	UpdateWindow, _hWnd
+				mov stRegion.bMouseDown, TRUE
+				invoke SendMessage, hWinMain, WM_REGION_SAVEFILE, 0, 0
 
-			mov bInRegion, FALSE
+				mov bInRegion, FALSE
+			.else
+				invoke MessageBox,NULL,offset szErrorNotRegion, NULL,MB_OK
+			.endif
 		.elseif ax == ID_REGION_MOVE
-			mov eax, stRegPtEnd.x
-			sub eax, stRegPtBegin.x
-			mov dwBuffWidth, eax
-			mov ebx, stRegPtEnd.y
-			sub ebx, stRegPtBegin.y
-			mov dwBuffHeight, ebx
-			push	stRegPtBegin.y
-			push	stRegPtBegin.x
-			pop	stRegMvPtStart.x
-			pop	stRegMvPtStart.y
-			
-			;invoke CreateCompatibleBitmap, stPaint.hMemDC, stPaint.dwWidth, stPaint.dwHeight
-			;mov @hBitmap, eax
-;
-			invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
-			invoke SelectObject, hBuffDC, hBuffBitmap
-			invoke BitBlt, hBuffDC, 0, 0, dwBuffWidth, dwBuffHeight, stPaint.hMemDC, stRegPtBegin.x, stRegPtBegin.y, SRCCOPY
-			mov bRegionMove, TRUE
+			.if bInRegion == TRUE
+				mov eax, stRegPtEnd.x
+				sub eax, stRegPtBegin.x
+				mov dwBuffWidth, eax
+				mov ebx, stRegPtEnd.y
+				sub ebx, stRegPtBegin.y
+				mov dwBuffHeight, ebx
+				push	stRegPtBegin.y
+				push	stRegPtBegin.x
+				pop	stRegMvPtStart.x
+				pop	stRegMvPtStart.y
+				invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
+				invoke SelectObject, hBuffDC, hBuffBitmap
+				invoke BitBlt, hBuffDC, 0, 0, dwBuffWidth, dwBuffHeight, stPaint.hMemDC, stRegPtBegin.x, stRegPtBegin.y, SRCCOPY
+				mov bRegionMove, TRUE
+			.else
+				invoke MessageBox,NULL,offset szErrorNotRegion, NULL,MB_OK
+			.endif
 		.endif
 
 	.elseif eax == WM_CHANGE_COLOR

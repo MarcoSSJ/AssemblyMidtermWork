@@ -174,4 +174,4 @@ szOtherBmp				db			".bmp",0
 szDefaultSaveFile		db			"1.bmp",0
 szDefaultOpenFile		db			".bmp",0
 szErrorSuffixNoBmp		db			'保存格式必须以bmp结尾!',0
-szError					db			'Error!',0
+szErrorNotRegion		db			'Error! 必须先选择Region Set',0
