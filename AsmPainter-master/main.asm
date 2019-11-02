@@ -147,6 +147,8 @@ local	@hPen:HPEN
 	invoke	SelectObject,stPaint.hMemDC,@hPen
 	invoke	Rectangle,stPaint.hMemDC,0,0,WINDOW_WIDTH,WINDOW_HEIGHT
 	invoke	ReleaseDC,_hWnd,@hDc
+	invoke	InvalidateRect, _hWnd, 0, FALSE
+	invoke	UpdateWindow, _hWnd
 	ret
 _CreateBuffer endp
 
@@ -156,6 +158,8 @@ _CreateMenu proc uses eax,_hIns:HINSTANCE
 	mov		hAccelerator,eax
 	ret
 _CreateMenu endp
+
+
 
 ;´°¿Ú¹ý³Ì
 _ProcWinMain proc uses ebx edi esi,_hWnd,_stMsg,_wParam,_lParam
@@ -525,7 +529,8 @@ local	@dwPickColor: dword
 			invoke _MySaveFile,_hWnd
 		.elseif ax == ID_FILE_OPENFILE
 			invoke _MyOpenFile,_hWnd
-
+		.elseif ax == ID_FILE_CLEAR
+			invoke	_CreateBuffer,_hWnd
 		.elseif ax == ID_SHAPE_PENCIL
 			mov bpentype,PENTYPE_PENCIL
 		.elseif ax == ID_SHAPE_CIRCLE
