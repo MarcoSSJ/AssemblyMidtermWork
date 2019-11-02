@@ -37,6 +37,7 @@ include main.inc
 include PaintInfo.inc
 include FileStream.inc
 .code
+include RegionLogic.asm
 include PaintLogic.asm
 include ColorBox.asm
 include	FileStream.asm
@@ -235,6 +236,7 @@ local	@dwPickColor: dword
 
 
 		invoke _BrushWhiteBg, offset stPaint
+		invoke _BrushWhiteBg, offset stRegion
 		;invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
 		;invoke GetStockObject, WHITE_BRUSH
 		;invoke SelectObject, stPaint.hMemDC, eax
@@ -294,12 +296,16 @@ local	@dwPickColor: dword
 		mov eax,_lParam
 		and eax,0FFFFh
 		mov stPaint.stMovPoint.x,eax
+		mov stRegion.stMovPoint.x, eax
 		mov eax,_lParam
 		shr eax,16
 		mov stPaint.stMovPoint.y,eax
+		mov stRegion.stMovPoint.y, eax
 		invoke _ComparePos,stPaint.stMovPoint
 		.if bInRegion != 0
-			
+			.if stRegion.bMouseDown != 0
+				invoke _RegionMouseMove, @hPen, @hBrush, _hWnd
+			.endif 
 		.else
 			invoke _PaintMouseMove, @hPen, @hBrush, _hWnd
 		.endif
@@ -307,9 +313,16 @@ local	@dwPickColor: dword
 	.elseif eax == WM_LBUTTONUP
 		
 		.if bInRegion != 0
-			
+			invoke _RegionLButtonUp, @hPen, @hBrush, _hWnd, _lParam
+
+			mov bInRegion, FALSE
+			invoke _BrushWhiteBg, offset stRegion
+			invoke	InvalidateRect, _hWnd, 0, FALSE
+			invoke	UpdateWindow, _hWnd
+			invoke SendMessage, hWinMain, WM_REGION_SAVEFILE, 0, 0
 		.else
 			invoke _PaintLButtonUp, @hPen, @hBrush, _hWnd, _lParam
+
 		.endif
 			
 
@@ -377,6 +390,21 @@ local	@dwPickColor: dword
 
 		invoke	CreatePen,PS_SOLID,bpenwidth,stPaint.dwCurColor
 		mov		@hPen,eax
+
+	.elseif eax ==WM_REGION_SAVEFILE
+		
+		push stRegPtBegin.x
+		push stRegPtBegin.y
+		push stRegPtEnd.x
+		push stRegPtEnd.y
+
+		pop	@stRect.bottom
+		pop @stRect.right
+		pop @stRect.top
+		pop @stRect.left
+
+		invoke _GetSaveFileName, offset szFileNameBuffer
+		invoke _SaveScreenToBmp, addr @stRect, hWinMain
 
 	.else
  		invoke	DefWindowProc,_hWnd,_stMsg,_wParam,_lParam
@@ -452,7 +480,7 @@ local	@stMsg:MSG
 _WinMain endp
 
 start:
-	or eax,eax
+	;or eax,eax
 	call _WinMain
 	invoke ExitProcess,NULL
 end start

@@ -66,95 +66,7 @@ local @openfile: OPENFILENAME
 	ret
 _GetOpenFileName endp
 
-;将hWnd窗口屏幕保存成HBITMAP
-_SaveScreenToBmp proc uses ebx esi edi, _lpRect: ptr RECT, _hWnd: HWND
-local	@hScreenDC:	HDC
-local	@hMemoryDC:	HDC
-local	@hBitmap:	HBITMAP
-local	@hOldBitmap:	HBITMAP
-local	@dwX1:		dword
-local	@dwX2:		dword
-local	@dwY1:		dword
-local	@dwY2:		dword
-local	@dwWidth:	dword
-local	@dwHeight:	dword
-local	@dwXReso:	dword;分辨率 resolution
-local	@dwYReso:	dword
-	invoke IsRectEmpty,	_lpRect
-	or eax, eax
-	jz @F
-	;.if (eax != 0);坑!!! 莫名其妙出bug??????????
-	ret
-@@:
 
-	invoke	CreateDC,addr szDisplay, NULL, NULL, NULL
-	mov		@hScreenDC, eax
-
-	invoke	CreateCompatibleDC, @hScreenDC
-	mov		@hMemoryDC, eax
-
-	mov		eax, _lpRect
-	assume	eax: ptr RECT
-	mov		edi, [eax].left
-	mov		@dwX1, edi
-	mov		edi, [eax].right
-	mov		@dwX2, edi
-	mov		edi, [eax].top
-	mov		@dwY1, edi
-	mov		edi, [eax].bottom
-	mov		@dwY2, edi
-
-	invoke GetDeviceCaps, @hScreenDC, HORZRES
-	mov	@dwXReso, eax
-	invoke GetDeviceCaps, @hScreenDC, VERTRES 
-	mov	@dwYReso, eax
-
-	.if (@dwX1 < 0)
-		mov @dwX1, 0
-	.endif
-
-	.if (@dwY1 < 0)
-		mov @dwY1, 0
-	.endif
-
-	mov eax, @dwXReso
-	.if (@dwX2 > eax)
-		mov @dwX2, eax
-	.endif
-
-	mov eax, @dwYReso
-	.if (@dwY2 > eax)
-		mov @dwY2, eax
-	.endif
-
-	mov eax, @dwX2
-	sub eax, @dwX1
-	mov @dwWidth, eax
-
-	mov eax, @dwY2
-	sub eax, @dwY1
-	mov @dwHeight, eax
-
-	invoke CreateCompatibleBitmap, @hScreenDC, @dwWidth, @dwHeight
-	mov @hBitmap, eax
-
-	invoke SelectObject, @hMemoryDC, @hBitmap
-	mov @hOldBitmap, eax
-
-	invoke BitBlt, @hMemoryDC, 0, 0, @dwWidth, @dwHeight, @hScreenDC,
-					@dwX1, @dwY1, SRCCOPY
-
-	invoke SelectObject, @hMemoryDC, @hOldBitmap
-	
-	mov @hBitmap, eax
-
-
-	invoke DeleteDC, @hScreenDC
-	invoke DeleteDC, @hMemoryDC
-
-	mov eax, @hBitmap
-	ret
-_SaveScreenToBmp endp
 
 ;根据HBITMAP和 HBITMAPHEADERINFO保存成二进制文件
 _CreateBmpFile proc uses ebx edx esi edi, _hWnd: HWND, _lpszFile: ptr byte,
@@ -351,3 +263,96 @@ local @bmp: BITMAP
 	mov eax, 0
 	ret
 _SaveBmpToFile endp 
+
+
+;将hWnd窗口屏幕保存成HBITMAP
+_SaveScreenToBmp proc uses ebx esi edi, _lpRect: ptr RECT, _hWnd: HWND
+local	@hScreenDC:	HDC
+local	@hMemoryDC:	HDC
+local	@hBitmap:	HBITMAP
+local	@hOldBitmap:	HBITMAP
+local	@dwX1:		dword
+local	@dwX2:		dword
+local	@dwY1:		dword
+local	@dwY2:		dword
+local	@dwWidth:	dword
+local	@dwHeight:	dword
+local	@dwXReso:	dword;分辨率 resolution
+local	@dwYReso:	dword
+	invoke IsRectEmpty,	_lpRect
+	or eax, eax
+	jz @F
+	;.if (eax != 0);坑!!! 莫名其妙出bug??????????
+	ret
+@@:
+
+	;invoke	CreateDC,addr szDisplay, NULL, NULL, NULL
+	invoke  GetDC, _hWnd
+	mov		@hScreenDC, eax
+
+	invoke	CreateCompatibleDC, @hScreenDC
+	mov		@hMemoryDC, eax
+
+	mov		eax, _lpRect
+	assume	eax: ptr RECT
+	mov		edi, [eax].left
+	mov		@dwX1, edi
+	mov		edi, [eax].right
+	mov		@dwX2, edi
+	mov		edi, [eax].top
+	mov		@dwY1, edi
+	mov		edi, [eax].bottom
+	mov		@dwY2, edi
+
+	invoke GetDeviceCaps, @hScreenDC, HORZRES
+	mov	@dwXReso, eax
+	invoke GetDeviceCaps, @hScreenDC, VERTRES 
+	mov	@dwYReso, eax
+
+	.if (@dwX1 < 0)
+		mov @dwX1, 0
+	.endif
+
+	.if (@dwY1 < 0)
+		mov @dwY1, 0
+	.endif
+
+	mov eax, @dwXReso
+	.if (@dwX2 > eax)
+		mov @dwX2, eax
+	.endif
+
+	mov eax, @dwYReso
+	.if (@dwY2 > eax)
+		mov @dwY2, eax
+	.endif
+
+	mov eax, @dwX2
+	sub eax, @dwX1
+	mov @dwWidth, eax
+
+	mov eax, @dwY2
+	sub eax, @dwY1
+	mov @dwHeight, eax
+
+	invoke CreateCompatibleBitmap, @hScreenDC, @dwWidth, @dwHeight
+	mov @hBitmap, eax
+
+	invoke SelectObject, @hMemoryDC, @hBitmap
+	mov @hOldBitmap, eax
+
+	invoke BitBlt, @hMemoryDC, 0, 0, @dwWidth, @dwHeight, @hScreenDC,
+					@dwX1, @dwY1, SRCCOPY
+
+	invoke SelectObject, @hMemoryDC, @hOldBitmap
+	
+	mov @hBitmap, eax
+
+	invoke _SaveBmpToFile, @hBitmap, _hWnd, offset szFileNameBuffer
+
+	invoke DeleteDC, @hScreenDC
+	invoke DeleteDC, @hMemoryDC
+
+	mov eax, @hBitmap
+	ret
+_SaveScreenToBmp endp
