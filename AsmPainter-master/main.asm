@@ -181,7 +181,7 @@ _BrushWhiteBg proc uses ebx ecx, _lpStPaint: ptr PAINTINFO
 	ret
 _BrushWhiteBg endp
 
-_FillWithColor proc uses ebx ecx edi esi, _hDC, _dwColor, _dwStartX, _dwStartY, _dwEndX, _dwEndY, _hWnd
+_FillWithColor proc uses ebx ecx edi esi, _hDC, _dwColor, _dwStartX, _dwStartY, _dwEndX, _dwEndY, _hWnd, _bUpdate
 local @hBitmap: HBITMAP
 local @hPen:	HPEN
 local @hBrush:	HBRUSH
@@ -197,9 +197,10 @@ local @hBrush:	HBRUSH
 
 	invoke	DeleteObject,@hPen
 	invoke	DeleteObject,@hBrush
-	invoke	InvalidateRect,_hWnd,0,FALSE
-	invoke	UpdateWindow,_hWnd
-
+	.if _bUpdate == TRUE
+		invoke	InvalidateRect,_hWnd,0,FALSE
+		invoke	UpdateWindow,_hWnd
+	.endif
 	ret
 _FillWithColor endp
 
@@ -354,6 +355,9 @@ local	@dwPickColor: dword
 		;若未使用选区,则取消
 		.if ax > ID_REGION_FILL || ax < ID_REGION_SET
 			mov bInRegion, FALSE
+			push eax
+			invoke _BrushWhiteBg, offset stRegion
+			pop eax
 		.endif
 
 		;使用选区但未先选用set,错误提示
@@ -453,14 +457,15 @@ local	@dwPickColor: dword
 				invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
 				invoke SelectObject, hBuffDC, hBuffBitmap
 				invoke BitBlt, hBuffDC, 0, 0, dwBuffWidth, dwBuffHeight, stPaint.hMemDC, stRegPtBegin.x, stRegPtBegin.y, SRCCOPY
-				mov bRegionMove, TRUE
+				mov    bRegionMove, TRUE
+				invoke _FillWithColor, stPaint.hMemDC, WHITE_COLOR, stRegPtBegin.x, stRegPtBegin.y, stRegPtEnd.x, stRegPtEnd.y, _hWnd, FALSE
 		.elseif ax == ID_REGION_CLEAR
 			
-			invoke _FillWithColor, stPaint.hMemDC, WHITE_COLOR, stRegPtBegin.x, stRegPtBegin.y, stRegPtEnd.x, stRegPtEnd.y, _hWnd
+			invoke _FillWithColor, stPaint.hMemDC, WHITE_COLOR, stRegPtBegin.x, stRegPtBegin.y, stRegPtEnd.x, stRegPtEnd.y, _hWnd, TRUE
 
 		.elseif ax == ID_REGION_FILL
 
-			invoke _FillWithColor, stPaint.hMemDC, stPaint.dwCurColor, stRegPtBegin.x, stRegPtBegin.y, stRegPtEnd.x, stRegPtEnd.y, _hWnd
+			invoke _FillWithColor, stPaint.hMemDC, stPaint.dwCurColor, stRegPtBegin.x, stRegPtBegin.y, stRegPtEnd.x, stRegPtEnd.y, _hWnd, TRUE
 
 		.endif
 
