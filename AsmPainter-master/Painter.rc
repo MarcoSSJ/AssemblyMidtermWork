@@ -90,6 +90,8 @@ BEGIN
     POPUP "Region"
     BEGIN
         MENUITEM "Set",                         ID_REGION_SET
+        MENUITEM "Save",                        ID_REGION_SAVE
+        MENUITEM "Move",                        ID_REGION_MOVE
     END
 END
 

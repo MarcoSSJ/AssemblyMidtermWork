@@ -205,6 +205,7 @@ local	@dwPickColor: dword
 	.elseif eax == WM_CREATE
 		invoke	_CreateBuffer,_hWnd, stPaint.hMemDC
 		invoke	_CreateBuffer,_hWnd, stRegion.hMemDC
+		invoke	_CreateBuffer,_hWnd, hBuffDC
 
 		invoke	_CreateColorBox,hInstance,_hWnd,0
 		mov		hWndColor,	eax
@@ -227,26 +228,20 @@ local	@dwPickColor: dword
 		mov stPaint.hMemDC, eax
 		invoke CreateCompatibleDC, @hDc
 		mov stRegion.hMemDC, eax
-
+		invoke CreateCompatibleDC, @hDc
+		mov hBuffDC, eax
+		
 		invoke CreateCompatibleBitmap, @hDc, stPaint.dwWidth, stPaint.dwHeight
 		mov stPaint.hBitmap, eax
 
 		invoke CreateCompatibleBitmap, @hDc, stRegion.dwWidth, stRegion.dwHeight
 		mov stRegion.hBitmap, eax
 
+		invoke CreateCompatibleBitmap, @hDc, stRegion.dwWidth, stRegion.dwHeight
+		mov hBuffBitmap, eax
 
 		invoke _BrushWhiteBg, offset stPaint
 		invoke _BrushWhiteBg, offset stRegion
-		;invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
-		;invoke GetStockObject, WHITE_BRUSH
-		;invoke SelectObject, stPaint.hMemDC, eax
-		;invoke GetStockObject, WHITE_PEN
-		;invoke SelectObject, stPaint.hMemDC, eax
-		;invoke Rectangle, stPaint.hMemDC, 0, 0, stPaint.dwWidth, stPaint.dwHeight;TODO whether bug?
-		;;invoke GetStockObject, WHITE_BRUSH
-		;invoke SelectObject, stPaint.hMemDC, eax
-		;invoke GetStockObject, BLACK_PEN
-		;invoke SelectObject, stPaint.hMemDC, eax
 
 	.elseif eax == WM_PAINT
 		mov	ebx,_hWnd
@@ -256,7 +251,16 @@ local	@dwPickColor: dword
 			invoke	SelectObject, stPaint.hMemDC, stPaint.hBitmap
 			invoke	BitBlt,@hDc,0,0,stPaint.dwWidth, stPaint.dwHeight ,stPaint.hMemDC ,0,0,SRCCOPY
 			.if bInRegion != 0
-				invoke BitBlt, @hDc, 0, 0, stRegion.dwWidth, stRegion.dwHeight, stRegion.hMemDC, 0, 0, SRCAND
+				.if bRegionMove == FALSE
+					invoke	BitBlt,@hDc,0,0,stPaint.dwWidth, stPaint.dwHeight ,stPaint.hMemDC ,0,0,SRCCOPY
+					invoke BitBlt, @hDc, 0, 0, stRegion.dwWidth, stRegion.dwHeight, stRegion.hMemDC, 0, 0, SRCAND					
+				.else
+					mov eax, stRegMvPtStart.x
+					add eax, stRegMvPtDelta.x
+					mov ebx, stRegMvPtStart.y
+					add ebx, stRegMvPtDelta.y
+					invoke BitBlt, @hDc, eax, ebx, dwBuffWidth, dwBuffHeight, hBuffDC, 0, 0, SRCAND
+				.endif
 			.endif 
 			invoke	EndPaint,_hWnd,addr @stPs
 		.endif
@@ -271,6 +275,11 @@ local	@dwPickColor: dword
 		mov stPaint.stHitPoint.y,eax
 		mov stRegion.stHitPoint.y,eax
 		.if bInRegion != 0
+			.if bRegionMove != TRUE
+				invoke _BrushWhiteBg, offset stRegion
+				invoke	InvalidateRect, _hWnd, 0, FALSE
+				invoke	UpdateWindow, _hWnd
+			.endif
 			mov stRegion.bMouseDown, TRUE
 			push stRegion.stHitPoint.x
 			push stRegion.stHitPoint.y
@@ -305,6 +314,8 @@ local	@dwPickColor: dword
 		.if bInRegion != 0
 			.if stRegion.bMouseDown != 0
 				invoke _RegionMouseMove, @hPen, @hBrush, _hWnd
+				invoke	InvalidateRect, _hWnd, 0, FALSE
+				invoke	UpdateWindow, _hWnd
 			.endif 
 		.else
 			invoke _PaintMouseMove, @hPen, @hBrush, _hWnd
@@ -314,12 +325,6 @@ local	@dwPickColor: dword
 		
 		.if bInRegion != 0
 			invoke _RegionLButtonUp, @hPen, @hBrush, _hWnd, _lParam
-
-			mov bInRegion, FALSE
-			invoke _BrushWhiteBg, offset stRegion
-			invoke	InvalidateRect, _hWnd, 0, FALSE
-			invoke	UpdateWindow, _hWnd
-			invoke SendMessage, hWinMain, WM_REGION_SAVEFILE, 0, 0
 		.else
 			invoke _PaintLButtonUp, @hPen, @hBrush, _hWnd, _lParam
 
@@ -381,6 +386,33 @@ local	@dwPickColor: dword
 			mov bpentype, PENTYPE_PICKCOLOR
 		.elseif ax == ID_REGION_SET
 			mov bInRegion, 1
+		.elseif ax == ID_REGION_SAVE
+			invoke _BrushWhiteBg, offset stRegion
+			invoke	InvalidateRect, _hWnd, 0, FALSE
+			invoke	UpdateWindow, _hWnd
+			mov stRegion.bMouseDown, TRUE
+			invoke SendMessage, hWinMain, WM_REGION_SAVEFILE, 0, 0
+
+			mov bInRegion, FALSE
+		.elseif ax == ID_REGION_MOVE
+			mov eax, stRegPtEnd.x
+			sub eax, stRegPtBegin.x
+			mov dwBuffWidth, eax
+			mov ebx, stRegPtEnd.y
+			sub ebx, stRegPtBegin.y
+			mov dwBuffHeight, ebx
+			push	stRegPtBegin.y
+			push	stRegPtBegin.x
+			pop	stRegMvPtStart.x
+			pop	stRegMvPtStart.y
+			
+			;invoke CreateCompatibleBitmap, stPaint.hMemDC, stPaint.dwWidth, stPaint.dwHeight
+			;mov @hBitmap, eax
+;
+			invoke SelectObject, stPaint.hMemDC, @hBitmap
+			invoke SelectObject, hBuffDC, hBuffBitmap
+			invoke BitBlt, hBuffDC, 0, 0, dwBuffWidth, dwBuffHeight, stPaint.hMemDC, stRegPtBegin.x, stRegPtBegin.y, SRCCOPY
+			mov bRegionMove, TRUE
 		.endif
 
 	.elseif eax == WM_CHANGE_COLOR

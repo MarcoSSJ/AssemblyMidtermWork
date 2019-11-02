@@ -1,27 +1,37 @@
 _RegionMouseMove proc uses ebx edi esi, _hPen, _hBrush, _hWnd
 	.if stRegion.bMouseDown == TRUE
-		invoke	SetROP2,stRegion.hMemDC,R2_NOTXORPEN
+		.if bRegionMove == TRUE
+			mov eax, stRegion.stMovPoint.x
+			mov ebx, stRegion.stMovPoint.y
+			sub eax, stRegion.stHitPoint.x
+			sub ebx, stRegion.stHitPoint.y
+			mov stRegMvPtDelta.x, eax
+			mov stRegMvPtDelta.y, ebx
 
-		invoke	CreatePen,PS_SOLID,bpenwidth,stRegion.dwCurColor
-		mov		_hPen,eax
-		invoke	GetStockObject,GRAY_BRUSH
-		mov		_hBrush,eax
+		.else
+			invoke	SetROP2,stRegion.hMemDC,R2_NOTXORPEN
 
-		invoke	SelectObject,stRegion.hMemDC,_hPen
-		invoke	SelectObject,stRegion.hMemDC,_hBrush
-		invoke	MoveToEx,stRegion.hMemDC,stRegion.stHitPoint.x,stRegion.stHitPoint.y,NULL
-		invoke	Rectangle,stRegion.hMemDC,stRegion.stHitPoint.x,stRegion.stHitPoint.y,stRegion.stLastMovPoint.x,stRegion.stLastMovPoint.y
-		invoke	Rectangle,stRegion.hMemDC,stRegion.stHitPoint.x,stRegion.stHitPoint.y,stRegion.stMovPoint.x,stRegion.stMovPoint.y
+			invoke	CreatePen,PS_SOLID,bpenwidth,stRegion.dwCurColor
+			mov		_hPen,eax
+			invoke	GetStockObject,GRAY_BRUSH
+			mov		_hBrush,eax
 
-		push	stRegion.stMovPoint.x
-		push	stRegion.stMovPoint.y
-		pop		stRegion.stLastMovPoint.y
-		pop		stRegion.stLastMovPoint.x
+			invoke	SelectObject,stRegion.hMemDC,_hPen
+			invoke	SelectObject,stRegion.hMemDC,_hBrush
+			invoke	MoveToEx,stRegion.hMemDC,stRegion.stHitPoint.x,stRegion.stHitPoint.y,NULL
+			invoke	Rectangle,stRegion.hMemDC,stRegion.stHitPoint.x,stRegion.stHitPoint.y,stRegion.stLastMovPoint.x,stRegion.stLastMovPoint.y
+			invoke	Rectangle,stRegion.hMemDC,stRegion.stHitPoint.x,stRegion.stHitPoint.y,stRegion.stMovPoint.x,stRegion.stMovPoint.y
 
-		invoke	DeleteObject,_hPen
-		invoke	DeleteObject,_hBrush
-		invoke	InvalidateRect,_hWnd,0,FALSE
-		invoke	UpdateWindow,_hWnd
+			push	stRegion.stMovPoint.x
+			push	stRegion.stMovPoint.y
+			pop		stRegion.stLastMovPoint.y
+			pop		stRegion.stLastMovPoint.x
+
+			invoke	DeleteObject,_hPen
+			invoke	DeleteObject,_hBrush
+			invoke	InvalidateRect,_hWnd,0,FALSE
+			invoke	UpdateWindow,_hWnd
+		.endif
 	.endif
 	ret
 _RegionMouseMove endp
@@ -58,6 +68,7 @@ _RegionLButtonUp proc uses ebx edx esi edi, _hPen, _hBrush, _hWnd, _lParam
 		pop stRegPtEnd.x
 		pop stRegPtBegin.y
 		pop stRegPtBegin.x
+
 	.endif
 	mov stRegion.bMouseDown,FALSE
 	ret

@@ -85,6 +85,8 @@ ID_COLOR_SELECT			equ			40022
 ID_COLOR_PICK			equ			40023
 ID_FILE_CLEAR			equ			40024
 ID_REGION_SET			equ			40025
+ID_REGION_SAVE			equ			40026
+ID_REGION_MOVE			equ			40027
 
 PENTYPE_PENCIL			equ			0
 PENTYPE_CIRCLE			equ			1
@@ -142,7 +144,7 @@ hWndColorBtns			dd			COLORS_NUM dup(?)
 
 
 
-;dBuffer					dd			?
+;dBuffer				dd			?
 ;stHitPoint				POINT		<>
 ;stLastMovPoint			POINT		<>
 ;stMovPoint				POINT		<>
@@ -150,9 +152,17 @@ hWndColorBtns			dd			COLORS_NUM dup(?)
 szFileNameBuffer		db			MAX_FILESIZE DUP(?)
 stPaint		PAINTINFO	<>
 stRegion	PAINTINFO	<>
-bInRegion				dd			0
+bInRegion				db			0
 stRegPtBegin			POINT		<>
 stRegPtEnd				POINT		<>
+
+bRegionMove				db			0
+stRegMvPtStart			POINT		<0,0>
+stRegMvPtDelta			POINT		<0,0>
+hBuffDC					HDC			?
+hBuffBitmap				HBITMAP		?
+dwBuffWidth				dword		?
+dwBuffHeight			dword		?
 
 .const
 szClassName				db			'MyClass',0
