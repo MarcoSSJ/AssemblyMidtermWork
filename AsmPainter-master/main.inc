@@ -87,6 +87,9 @@ ID_FILE_CLEAR			equ			40024
 ID_REGION_SET			equ			40025
 ID_REGION_SAVE			equ			40026
 ID_REGION_MOVE			equ			40027
+ID_REGION_COPY			equ			40028
+ID_REGION_CLEAR			equ			40029
+ID_REGION_FILL			equ			40030
 
 PENTYPE_PENCIL			equ			0
 PENTYPE_CIRCLE			equ			1
@@ -101,6 +104,8 @@ MAX_FILESIZE			equ			1000
 WINDOW_WIDTH			equ			800
 WINDOW_HEIGHT			equ			600
 COLOR_BUTTON_WIDTH		equ			40
+
+WHITE_COLOR				equ			0ffffffh
 .data
 ;bMouseClick				db			FALSE
 
@@ -174,4 +179,5 @@ szOtherBmp				db			".bmp",0
 szDefaultSaveFile		db			"1.bmp",0
 szDefaultOpenFile		db			".bmp",0
 szErrorSuffixNoBmp		db			'保存格式必须以bmp结尾!',0
-szErrorNotRegion		db			'Error! 必须先选择Region Set',0
+szErrorNotRegion			db			'Error! 必须先选择Region Set',0
+szErrorZeroRegion		db			'Error! 必须选择有大小的Region',0

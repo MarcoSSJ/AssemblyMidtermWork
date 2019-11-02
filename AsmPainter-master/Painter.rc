@@ -92,6 +92,9 @@ BEGIN
         MENUITEM "Set",                         ID_REGION_SET
         MENUITEM "Save",                        ID_REGION_SAVE
         MENUITEM "Move",                        ID_REGION_MOVE
+        MENUITEM "Copy",                        ID_REGION_CLEAR
+        MENUITEM "Clear",                       ID_REGION_CLEAR40029
+        MENUITEM "Fill",                        ID_REGION_FILL
     END
 END
 

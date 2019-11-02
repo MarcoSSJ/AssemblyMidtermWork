@@ -178,11 +178,30 @@ _BrushWhiteBg proc uses ebx ecx, _lpStPaint: ptr PAINTINFO
 	mov ebx, _lpStPaint
 	assume ebx: ptr PAINTINFO
 	invoke Rectangle, [ebx].hMemDC, 0, 0, [ebx].dwWidth, [ebx].dwHeight;TODO whether bug?
-
-
 	ret
 _BrushWhiteBg endp
 
+_FillWithColor proc uses ebx ecx edi esi, _hDC, _dwColor, _dwStartX, _dwStartY, _dwEndX, _dwEndY, _hWnd
+local @hBitmap: HBITMAP
+local @hPen:	HPEN
+local @hBrush:	HBRUSH
+	invoke	CreatePen,PS_SOLID, 0, _dwColor
+	mov		@hPen,eax
+	invoke	CreateSolidBrush, _dwColor
+	mov		@hBrush,eax
+
+	invoke	SelectObject,stPaint.hMemDC,@hPen
+	invoke	SelectObject,stPaint.hMemDC,@hBrush
+	invoke	MoveToEx,stPaint.hMemDC, _dwStartX , _dwStartY, NULL
+	invoke	Rectangle,stPaint.hMemDC, _dwStartX, _dwStartY, _dwEndX, _dwEndY
+
+	invoke	DeleteObject,@hPen
+	invoke	DeleteObject,@hBrush
+	invoke	InvalidateRect,_hWnd,0,FALSE
+	invoke	UpdateWindow,_hWnd
+
+	ret
+_FillWithColor endp
 
 ;窗口过程
 _ProcWinMain proc uses ebx edi esi,_hWnd,_stMsg,_wParam,_lParam
@@ -333,8 +352,14 @@ local	@dwPickColor: dword
 	.elseif eax == WM_COMMAND
 		mov eax,_wParam
 		;若未使用选区,则取消
-		.if ax > ID_REGION_MOVE || ax < ID_REGION_SET
+		.if ax > ID_REGION_FILL || ax < ID_REGION_SET
 			mov bInRegion, FALSE
+		.endif
+
+		;使用选区但未先选用set,错误提示
+		.if ax >= ID_REGION_SAVE && ax <= ID_REGION_FILL && bInRegion != TRUE
+			invoke MessageBox,NULL,offset szErrorNotRegion, NULL,MB_OK
+			ret
 		.endif
 
 		.if ax == ID_FILE_SAVE
@@ -391,7 +416,6 @@ local	@dwPickColor: dword
 		.elseif ax == ID_REGION_SET
 			mov bInRegion, 1
 		.elseif ax == ID_REGION_SAVE
-			.if bInRegion == TRUE
 				invoke _BrushWhiteBg, offset stRegion
 				invoke	InvalidateRect, _hWnd, 0, FALSE
 				invoke	UpdateWindow, _hWnd
@@ -399,11 +423,8 @@ local	@dwPickColor: dword
 				invoke SendMessage, hWinMain, WM_REGION_SAVEFILE, 0, 0
 
 				mov bInRegion, FALSE
-			.else
-				invoke MessageBox,NULL,offset szErrorNotRegion, NULL,MB_OK
-			.endif
-		.elseif ax == ID_REGION_MOVE
-			.if bInRegion == TRUE
+
+		.elseif ax == ID_REGION_COPY
 				mov eax, stRegPtEnd.x
 				sub eax, stRegPtBegin.x
 				mov dwBuffWidth, eax
@@ -418,9 +439,29 @@ local	@dwPickColor: dword
 				invoke SelectObject, hBuffDC, hBuffBitmap
 				invoke BitBlt, hBuffDC, 0, 0, dwBuffWidth, dwBuffHeight, stPaint.hMemDC, stRegPtBegin.x, stRegPtBegin.y, SRCCOPY
 				mov bRegionMove, TRUE
-			.else
-				invoke MessageBox,NULL,offset szErrorNotRegion, NULL,MB_OK
-			.endif
+		.elseif ax == ID_REGION_MOVE
+				mov eax, stRegPtEnd.x
+				sub eax, stRegPtBegin.x
+				mov dwBuffWidth, eax
+				mov ebx, stRegPtEnd.y
+				sub ebx, stRegPtBegin.y
+				mov dwBuffHeight, ebx
+				push	stRegPtBegin.y
+				push	stRegPtBegin.x
+				pop	stRegMvPtStart.x
+				pop	stRegMvPtStart.y
+				invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
+				invoke SelectObject, hBuffDC, hBuffBitmap
+				invoke BitBlt, hBuffDC, 0, 0, dwBuffWidth, dwBuffHeight, stPaint.hMemDC, stRegPtBegin.x, stRegPtBegin.y, SRCCOPY
+				mov bRegionMove, TRUE
+		.elseif ax == ID_REGION_CLEAR
+			
+			invoke _FillWithColor, stPaint.hMemDC, WHITE_COLOR, stRegPtBegin.x, stRegPtBegin.y, stRegPtEnd.x, stRegPtEnd.y, _hWnd
+
+		.elseif ax == ID_REGION_FILL
+
+			invoke _FillWithColor, stPaint.hMemDC, stPaint.dwCurColor, stRegPtBegin.x, stRegPtBegin.y, stRegPtEnd.x, stRegPtEnd.y, _hWnd
+
 		.endif
 
 	.elseif eax == WM_CHANGE_COLOR

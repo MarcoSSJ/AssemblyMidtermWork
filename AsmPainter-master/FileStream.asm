@@ -282,7 +282,8 @@ local	@dwYReso:	dword
 	invoke IsRectEmpty,	_lpRect
 	or eax, eax
 	jz @F
-	;.if (eax != 0);坑!!! 莫名其妙出bug??????????
+	;大小为空,警告
+	invoke MessageBox,NULL,offset szErrorZeroRegion, NULL,MB_OK
 	ret
 @@:
 

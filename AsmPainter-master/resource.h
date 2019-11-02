@@ -30,13 +30,16 @@
 #define ID_REGION_SET                   40025
 #define ID_REGION_SAVE                  40026
 #define ID_REGION_MOVE                  40027
+#define ID_REGION_CLEAR                 40028
+#define ID_REGION_CLEAR40029            40029
+#define ID_REGION_FILL                  40030
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        102
-#define _APS_NEXT_COMMAND_VALUE         40028
+#define _APS_NEXT_COMMAND_VALUE         40031
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
