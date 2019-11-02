@@ -252,8 +252,7 @@ local	@dwPickColor: dword
 			invoke	BitBlt,@hDc,0,0,stPaint.dwWidth, stPaint.dwHeight ,stPaint.hMemDC ,0,0,SRCCOPY
 			.if bInRegion != 0
 				.if bRegionMove == FALSE
-					invoke	BitBlt,@hDc,0,0,stPaint.dwWidth, stPaint.dwHeight ,stPaint.hMemDC ,0,0,SRCCOPY
-					invoke BitBlt, @hDc, 0, 0, stRegion.dwWidth, stRegion.dwHeight, stRegion.hMemDC, 0, 0, SRCAND					
+					invoke  BitBlt, @hDc, 0, 0, stRegion.dwWidth, stRegion.dwHeight, stRegion.hMemDC, 0, 0, SRCAND					
 				.else
 					mov eax, stRegMvPtStart.x
 					add eax, stRegMvPtDelta.x
@@ -409,7 +408,7 @@ local	@dwPickColor: dword
 			;invoke CreateCompatibleBitmap, stPaint.hMemDC, stPaint.dwWidth, stPaint.dwHeight
 			;mov @hBitmap, eax
 ;
-			invoke SelectObject, stPaint.hMemDC, @hBitmap
+			invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
 			invoke SelectObject, hBuffDC, hBuffBitmap
 			invoke BitBlt, hBuffDC, 0, 0, dwBuffWidth, dwBuffHeight, stPaint.hMemDC, stRegPtBegin.x, stRegPtBegin.y, SRCCOPY
 			mov bRegionMove, TRUE
@@ -512,7 +511,7 @@ local	@stMsg:MSG
 _WinMain endp
 
 start:
-	;or eax,eax
+	or eax,eax
 	call _WinMain
 	invoke ExitProcess,NULL
 end start
