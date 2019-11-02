@@ -56,6 +56,7 @@ BEGIN
     BEGIN
         MENUITEM "Open File",                   ID_FILE_OPENFILE
         MENUITEM "Save File",                   ID_FILE_SAVE
+        MENUITEM "Clear",                       ID_FILE_CLEAR
     END
     POPUP "Pen"
     BEGIN
@@ -77,8 +78,8 @@ BEGIN
         MENUITEM "Line",                        ID_SHAPE_LINE
         MENUITEM "Pencil",                      ID_SHAPE_PENCIL
         MENUITEM "Earser",                      ID_SHAPE_EARSER
-        MENUITEM "Circle(filled)",              ID_SHAPE_CIRCLE40019
-        MENUITEM "Rectangle(filled)",           ID_SHAPE_RECTANGLE40020
+        MENUITEM "Circle(filled)",              ID_SHAPE_CIRCLE_FILLED
+        MENUITEM "Rectangle(filled)",           ID_SHAPE_RECTANGLE_FILLED
         MENUITEM "Dot line",                    ID_SHAPE_DOT
     END
     POPUP "Color"

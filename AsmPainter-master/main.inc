@@ -58,8 +58,8 @@ PAINTINFO ENDS
 WM_CHANGE_COLOR			equ			WM_USER + 1
 WM_SELECT_COLOR			equ			WM_USER + 2
 IDR_MENU1               equ			101
-IDM_OPEN				equ			40001
-IDM_SAVE				equ			40002
+IDM_OPEN				equ			30001
+IDM_SAVE				equ			30002
 ID_FILE_OPENFILE		equ			40002
 ID_FILE_SAVE			equ			40003
 ID_PEN_WIDTH1           equ         40004
@@ -77,12 +77,21 @@ ID_SHAPE_RECTANGLE      equ         40015
 ID_SHAPE_LINE           equ         40016
 ID_SHAPE_PENCIL         equ         40017
 ID_SHAPE_EARSER         equ         40018
-ID_SHAPE_CIRCLE40019    equ         40019
-ID_SHAPE_RECTANGLE40020 equ         40020
+ID_SHAPE_CIRCLE_FILLED    equ       40019
+ID_SHAPE_RECTANGLE_FILLED equ       40020
 ID_SHAPE_DOT            equ         40021
 ID_COLOR_SELECT			equ			40022
-ID_COLOR_PICK			equ			ID_COLOR_SELECT + 1
+ID_COLOR_PICK			equ			40023
+ID_FILE_CLEAR			equ			40024
 
+PENTYPE_PENCIL			equ			0
+PENTYPE_CIRCLE			equ			1
+PENTYPE_RECTANGLE		equ			2
+PENTYPE_LINE			equ			3
+PENTYPE_ERASER			equ			4
+PENTYPE_CIRCLE_FILLED	equ			5
+PENTYPE_RECTANGLE_FILLED equ		6
+PENTYPE_DOT				equ			7
 PENTYPE_PICKCOLOR		equ			10
 MAX_FILESIZE			equ			1000
 WINDOW_WIDTH			equ			800
@@ -92,7 +101,7 @@ COLOR_BUTTON_WIDTH		equ			40
 ;bMouseClick				db			FALSE
 dwCurColor				dd			0
 bpenwidth				db			1
-bpentype				db			1;1£ºpencil, 2£ºcircle, 3:Rectangle, 4:line, default:pencil
+bpentype				db			0;1£ºpencil, 2£ºcircle, 3:Rectangle, 4:line, default:pencil
 dwColors				dd			0h,\
 									0c0c0c0h,\
 									0808080h,\

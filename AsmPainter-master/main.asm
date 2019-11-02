@@ -249,7 +249,7 @@ local	@dwPickColor: dword
 		mov stPaint.stMovPoint.y,eax
 		invoke _ComparePos,stPaint.stMovPoint
 		.if stPaint.bMouseDown == TRUE
-			.if bpentype == 1
+			.if bpentype == PENTYPE_PENCIL
 				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -265,7 +265,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hPen
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 2
+			.elseif bpentype == PENTYPE_CIRCLE
 				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -288,7 +288,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hBrush
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 3
+			.elseif bpentype == PENTYPE_RECTANGLE
 				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -311,7 +311,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hBrush
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 4
+			.elseif bpentype == PENTYPE_LINE
 				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -332,7 +332,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hPen
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 5
+			.elseif bpentype == PENTYPE_ERASER	
 				invoke	SetROP2,stPaint.hMemDC,R2_WHITE
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -348,7 +348,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hPen
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 6
+			.elseif bpentype == PENTYPE_CIRCLE_FILLED
 				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -371,7 +371,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hBrush
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 7
+			.elseif bpentype == PENTYPE_RECTANGLE_FILLED
 				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -394,7 +394,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hBrush
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 8
+			.elseif bpentype == PENTYPE_DOT	
 				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
 
 				invoke	CreatePen,PS_DOT,bpenwidth,dwCurColor
@@ -428,7 +428,7 @@ local	@dwPickColor: dword
 			shr eax,16
 			mov stPaint.stReleasePoint.y,eax
 
-			.if bpentype == 2;circle
+			.if bpentype == PENTYPE_CIRCLE;circle
 				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -444,7 +444,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hBrush
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 3;rectangle
+			.elseif bpentype == PENTYPE_RECTANGLE;rectangle
 				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -460,7 +460,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hBrush
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 4;line
+			.elseif bpentype == PENTYPE_LINE;line
 				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -472,7 +472,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hPen
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 6;circle
+			.elseif bpentype == PENTYPE_CIRCLE_FILLED;circle
 				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -488,7 +488,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hBrush
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 7;rectangle
+			.elseif bpentype == PENTYPE_RECTANGLE_FILLED;rectangle
 				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
 
 				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
@@ -504,7 +504,7 @@ local	@dwPickColor: dword
 				invoke	DeleteObject,@hBrush
 				invoke	InvalidateRect,_hWnd,0,FALSE
 				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == 8;line
+			.elseif bpentype == PENTYPE_DOT	;line
 				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
 
 				invoke	CreatePen,PS_DOT,bpenwidth,dwCurColor
@@ -527,21 +527,21 @@ local	@dwPickColor: dword
 			invoke _MyOpenFile,_hWnd
 
 		.elseif ax == ID_SHAPE_PENCIL
-			mov bpentype,1
+			mov bpentype,PENTYPE_PENCIL
 		.elseif ax == ID_SHAPE_CIRCLE
-			mov bpentype,2
+			mov bpentype,PENTYPE_CIRCLE
 		.elseif ax == ID_SHAPE_RECTANGLE
-			mov bpentype,3
+			mov bpentype,PENTYPE_RECTANGLE
 		.elseif ax == ID_SHAPE_LINE
-			mov bpentype,4
+			mov bpentype,PENTYPE_LINE
 		.elseif ax == ID_SHAPE_EARSER
-			mov bpentype,5
-		.elseif ax == ID_SHAPE_CIRCLE40019
-			mov bpentype,6
-		.elseif ax == ID_SHAPE_RECTANGLE40020
-			mov bpentype,7
+			mov bpentype,PENTYPE_ERASER
+		.elseif ax == ID_SHAPE_CIRCLE_FILLED
+			mov bpentype,PENTYPE_CIRCLE_FILLED
+		.elseif ax == ID_SHAPE_RECTANGLE_FILLED
+			mov bpentype,PENTYPE_RECTANGLE_FILLED
 		.elseif ax == ID_SHAPE_DOT
-			mov bpentype,8
+			mov bpentype,PENTYPE_DOT
 
 		.elseif ax == ID_PEN_WIDTH1
 			mov bpenwidth,1
