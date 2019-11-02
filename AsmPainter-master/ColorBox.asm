@@ -66,6 +66,7 @@ local	@color:COLORREF
 local	@hbr:HBRUSH 
 local	@hOldBr:HBRUSH
 local	@rt:RECT
+local	@hParWnd: HWND
 	mov	eax,_stMsg
 	.if eax == WM_CREATE
 		mov		ecx,_lParam
@@ -90,8 +91,9 @@ local	@rt:RECT
 		invoke	GetWindowLong,_hWnd,0
 		mov		@color,eax
 		invoke	GetParent,_hWnd
-		mov		ebx,eax
-		invoke	SendMessage,ebx,WM_CHANGE_COLOR,0,@color;传递WM_CHANGE_COLOR信号
+		mov		@hParWnd,eax
+		invoke	SendMessage, @hParWnd, WM_CHANGE_COLOR,0,@color;传递WM_CHANGE_COLOR信号
+		invoke	SendMessage, @hParWnd, WM_SELECT_COLOR,0,@color;传递WM_CHANGE_COLOR信号
 	.elseif eax == WM_DESTROY
 		;invoke	PostQuitMessage,NULL 这个是主窗口用的
 	.else
