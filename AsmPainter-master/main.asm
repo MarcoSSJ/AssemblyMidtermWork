@@ -223,6 +223,9 @@ local	@dwPickColor: dword
 		invoke	PostQuitMessage,NULL
 
 	.elseif eax == WM_CREATE
+		mov	eax,_hWnd
+		mov	hWinMain,eax
+
 		invoke	_CreateBuffer,_hWnd, stPaint.hMemDC
 		invoke	_CreateBuffer,_hWnd, stRegion.hMemDC
 		invoke	_CreateBuffer,_hWnd, hBuffDC
@@ -263,6 +266,14 @@ local	@dwPickColor: dword
 		invoke _BrushWhiteBg, offset stPaint
 		invoke _BrushWhiteBg, offset stRegion
 
+		invoke	CreateToolbarEx,hWinMain,\
+				WS_VISIBLE or WS_CHILD or TBSTYLE_FLAT or TBSTYLE_TOOLTIPS or CCS_ADJUSTABLE,\
+				ID_TOOLBAR,0,HINST_COMMCTRL,IDB_STD_SMALL_COLOR,offset stToolbar,\
+				NUM_BUTTONS,0,0,0,0,sizeof TBBUTTON
+			mov	hWinToolbar,eax
+		invoke	SendMessage,hWinToolbar,TB_AUTOSIZE,0,0
+		;invoke	GetClientRect,hWinMain,addr @stRect
+		;invoke	GetWindowRect,hWinToolbar,addr @stRect1
 	.elseif eax == WM_PAINT
 		mov	ebx,_hWnd
 		.if ebx == hWinMain
@@ -508,6 +519,9 @@ local	@stMsg:MSG
 	;If the function succeeds, the return value is a handle to the specified module.
 	invoke	GetModuleHandle,NULL
 	mov		hInstance,eax
+	invoke LoadIcon,hInstance,IDI_ICON_LOAD
+	invoke LoadIcon,hInstance,IDI_ICON_SAVE
+	invoke LoadIcon,hInstance,IDI_ICON_CLEAR
 	invoke	RtlZeroMemory,addr @stWndClass,sizeof @stWndClass ;Fills a block of memory with zeros.
 
 	; º¯Êý: MyRegisterClass()
@@ -566,6 +580,7 @@ local	@stMsg:MSG
 _WinMain endp
 
 start:
+
 	or eax,eax
 	call _WinMain
 	invoke ExitProcess,NULL

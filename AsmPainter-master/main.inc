@@ -59,8 +59,8 @@ WM_CHANGE_COLOR			equ			WM_USER + 1
 WM_SELECT_COLOR			equ			WM_USER + 2
 WM_REGION_SAVEFILE		equ			WM_USER + 3
 IDR_MENU1               equ			101
-IDM_OPEN				equ			30001
-IDM_SAVE				equ			30002
+;IDM_OPEN				equ			30001
+;IDM_SAVE				equ			30002
 ID_FILE_OPENFILE		equ			40002
 ID_FILE_SAVE			equ			40003
 ID_PEN_WIDTH1           equ         40004
@@ -104,6 +104,42 @@ MAX_FILESIZE			equ			1000
 WINDOW_WIDTH			equ			800
 WINDOW_HEIGHT			equ			600
 COLOR_BUTTON_WIDTH		equ			40
+
+;ico定义
+IDI_ICON1               equ			1001
+IDI_ICON2               equ			1002
+IDI_ICON3               equ			1003
+IDI_ICON4               equ			1004
+IDI_ICON5               equ			1005
+IDI_ICON6               equ			1006
+IDI_ICON7               equ			1007
+IDI_ICON8               equ			1008
+IDI_ICON9               equ			1009
+IDI_ICON_CIRCLE         equ			1010
+IDI_ICON_CIRCLEF        equ			1011
+IDI_ICON_CLEARR         equ			1012
+IDI_ICON_CLEAR          equ			1013
+IDI_ICON_COLOR          equ			1014
+IDI_ICON_COPY           equ			1015
+IDI_ICON_DOTTED         equ			1016
+IDI_ICON_FILL           equ			1017
+IDI_ICON_LINE           equ			1018
+IDI_ICON_LOAD           equ			1019
+IDI_ICON_MOVE           equ			1020
+IDI_ICON_PENCIL         equ			1021
+IDI_ICON_PICK           equ			1022
+IDI_ICON_RECT           equ			1023
+IDI_ICON_RECTF          equ			1024
+IDI_ICON_SAVE           equ			1025
+IDI_ICON_SCREENSHOT     equ			1026
+IDI_ICON_SET            equ			1027
+
+ID_TOOLBAR				equ			1
+
+IDM_NEW		equ	1101
+IDM_OPEN	equ	1102
+IDM_SAVE	equ	1103
+
 
 WHITE_COLOR				equ			0ffffffh
 .data
@@ -168,7 +204,7 @@ hBuffDC					HDC			?
 hBuffBitmap				HBITMAP		?
 dwBuffWidth				dword		?
 dwBuffHeight			dword		?
-
+hWinToolbar				dd			?
 .const
 szClassName				db			'MyClass',0
 szCaptionMain			db			'MyPainter',0
@@ -181,3 +217,13 @@ szDefaultOpenFile		db			".bmp",0
 szErrorSuffixNoBmp		db			'保存格式必须以bmp结尾!',0
 szErrorNotRegion			db			'Error! 必须先选择Region Set',0
 szErrorZeroRegion		db			'Error! 必须选择有大小的Region',0
+stToolbar	equ	this byte
+;TBBUTTON	<IDI_ICON_LOAD,ID_FILE_OPENFILE,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
+;TBBUTTON	<IDI_ICON_SAVE,ID_FILE_SAVE,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
+;TBBUTTON	<IDI_ICON_CLEAR, ID_FILE_CLEAR,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
+;TBBUTTON	<0,0,TBSTATE_ENABLED,TBSTYLE_SEP,0,0,-1>
+TBBUTTON	<STD_FILENEW,IDM_NEW,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
+TBBUTTON	<STD_FILEOPEN,IDM_OPEN,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
+TBBUTTON	<STD_FILESAVE,IDM_SAVE,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
+TBBUTTON	<0,0,TBSTATE_ENABLED,TBSTYLE_SEP,0,0,-1>
+NUM_BUTTONS	EQU	4
