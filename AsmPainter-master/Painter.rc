@@ -87,6 +87,10 @@ BEGIN
         MENUITEM "Select",                      ID_COLOR_SELECT
         MENUITEM "Pick",                        ID_COLOR_PICK
     END
+    POPUP "Region"
+    BEGIN
+        MENUITEM "Set",                         ID_REGION_SET
+    END
 END
 
 #endif    // 中文(简体，中国) resources

@@ -47,13 +47,13 @@ PAINTINFO STRUCT
   stMovPoint				POINT		<>
   stLastMovPoint			POINT		<>
   stReleasePoint			POINT		<>
-	bMouseDown	byte	0
-	hBitmap		HBITMAP	?
-	hMemDC		HDC		?
-	dwWidth		DWORD	?
-	dwHeight	DWORD	?
+  bMouseDown				byte		0
+  hBitmap					HBITMAP		?
+  hMemDC					HDC			?
+  dwWidth					DWORD		?
+  dwHeight					DWORD		?
+  dwCurColor				dd			0
 PAINTINFO ENDS
-
 
 WM_CHANGE_COLOR			equ			WM_USER + 1
 WM_SELECT_COLOR			equ			WM_USER + 2
@@ -83,6 +83,7 @@ ID_SHAPE_DOT            equ         40021
 ID_COLOR_SELECT			equ			40022
 ID_COLOR_PICK			equ			40023
 ID_FILE_CLEAR			equ			40024
+ID_REGION_SET			equ			40025
 
 PENTYPE_PENCIL			equ			0
 PENTYPE_CIRCLE			equ			1
@@ -99,7 +100,7 @@ WINDOW_HEIGHT			equ			600
 COLOR_BUTTON_WIDTH		equ			40
 .data
 ;bMouseClick				db			FALSE
-dwCurColor				dd			0
+
 bpenwidth				db			1
 bpentype				db			0;1£ºpencil, 2£ºcircle, 3:Rectangle, 4:line, default:pencil
 dwColors				dd			0h,\
@@ -138,6 +139,8 @@ hAccelerator			dd			?
 hWndColorBtns			dd			COLORS_NUM dup(?)
 
 
+
+
 ;dBuffer					dd			?
 ;stHitPoint				POINT		<>
 ;stLastMovPoint			POINT		<>
@@ -145,6 +148,10 @@ hWndColorBtns			dd			COLORS_NUM dup(?)
 ;stReleasePoint			POINT		<>
 szFileNameBuffer		db			MAX_FILESIZE DUP(?)
 stPaint		PAINTINFO	<>
+stRegion	PAINTINFO	<>
+bInRegion				dd			0
+stRegPtBegin			POINT		<>
+stRegPtEnd				POINT		<>
 
 .const
 szClassName				db			'MyClass',0

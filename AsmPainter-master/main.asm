@@ -37,6 +37,7 @@ include main.inc
 include PaintInfo.inc
 include FileStream.inc
 .code
+include PaintLogic.asm
 include ColorBox.asm
 include	FileStream.asm
 
@@ -103,7 +104,7 @@ local @myColor:CHOOSECOLOR
 	mov		@myColor.lpTemplateName,0
 	invoke	ChooseColor,addr @myColor
 	mov		eax,@myColor.rgbResult
-	mov		dwCurColor,eax
+	mov		stPaint.dwCurColor,eax
 	ret
 _MySelectColor endp
 
@@ -131,21 +132,21 @@ L1:
 	ret
 _ComparePos endp
 
-_CreateBuffer proc uses eax ecx,_hWnd
+_CreateBuffer proc uses ecx,_hWnd, _hMemDC
 local	@hDc:HDC
 local	@hBitMap:HBITMAP
 local	@hPen:HPEN
 	invoke	GetDC,_hWnd
 	mov		@hDc,eax
 	invoke	CreateCompatibleDC,@hDc
-	mov		stPaint.hMemDC,eax
+	mov		_hMemDC,eax
 	invoke	CreateCompatibleBitmap,@hDc,WINDOW_WIDTH,WINDOW_HEIGHT
 	mov		@hBitMap,eax
-	invoke	SelectObject,stPaint.hMemDC,@hBitMap
+	invoke	SelectObject,_hMemDC,@hBitMap
 	invoke	GetStockObject,NULL_PEN
 	mov		@hPen,eax
-	invoke	SelectObject,stPaint.hMemDC,@hPen
-	invoke	Rectangle,stPaint.hMemDC,0,0,WINDOW_WIDTH,WINDOW_HEIGHT
+	invoke	SelectObject,_hMemDC,@hPen
+	invoke	Rectangle,_hMemDC,0,0,WINDOW_WIDTH,WINDOW_HEIGHT
 	invoke	ReleaseDC,_hWnd,@hDc
 	invoke	InvalidateRect, _hWnd, 0, FALSE
 	invoke	UpdateWindow, _hWnd
@@ -159,6 +160,27 @@ _CreateMenu proc uses eax,_hIns:HINSTANCE
 	ret
 _CreateMenu endp
 
+;将背景画为白色
+_BrushWhiteBg proc uses ebx ecx, _lpStPaint: ptr PAINTINFO
+
+	mov ebx, _lpStPaint
+	assume ebx: ptr PAINTINFO
+	invoke SelectObject, [ebx].hMemDC, [ebx].hBitmap
+	invoke GetStockObject, WHITE_BRUSH
+	mov ebx, _lpStPaint
+	assume ebx: ptr PAINTINFO
+	invoke SelectObject, [ebx].hMemDC, eax
+	invoke GetStockObject, WHITE_PEN
+	mov ebx, _lpStPaint
+	assume ebx: ptr PAINTINFO
+	invoke SelectObject, [ebx].hMemDC, eax
+	mov ebx, _lpStPaint
+	assume ebx: ptr PAINTINFO
+	invoke Rectangle, [ebx].hMemDC, 0, 0, [ebx].dwWidth, [ebx].dwHeight;TODO whether bug?
+
+
+	ret
+_BrushWhiteBg endp
 
 
 ;窗口过程
@@ -180,7 +202,9 @@ local	@dwPickColor: dword
 		invoke	PostQuitMessage,NULL
 
 	.elseif eax == WM_CREATE
-		invoke	_CreateBuffer,_hWnd
+		invoke	_CreateBuffer,_hWnd, stPaint.hMemDC
+		invoke	_CreateBuffer,_hWnd, stRegion.hMemDC
+
 		invoke	_CreateColorBox,hInstance,_hWnd,0
 		mov		hWndColor,	eax
 		invoke	GetClientRect, _hWnd, addr @stRect
@@ -188,30 +212,39 @@ local	@dwPickColor: dword
 		mov	ebx, @stRect.right
 		sub ebx, @stRect.left
 		mov stPaint.dwWidth, ebx
+		mov stRegion.dwWidth, ebx
 
 		mov ebx, @stRect.bottom
 		sub ebx, @stRect.top
 		mov stPaint.dwHeight, ebx
+		mov stRegion.dwHeight, ebx
 
 		invoke GetDC, _hWnd
 		mov @hDc, eax
 
 		invoke CreateCompatibleDC, @hDc
 		mov stPaint.hMemDC, eax
+		invoke CreateCompatibleDC, @hDc
+		mov stRegion.hMemDC, eax
 
 		invoke CreateCompatibleBitmap, @hDc, stPaint.dwWidth, stPaint.dwHeight
 		mov stPaint.hBitmap, eax
 
-		invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
-		invoke GetStockObject, WHITE_BRUSH
-		invoke SelectObject, stPaint.hMemDC, eax
-		invoke GetStockObject, WHITE_PEN
-		invoke SelectObject, stPaint.hMemDC, eax
-		invoke Rectangle, stPaint.hMemDC, 0, 0, stPaint.dwWidth, stPaint.dwHeight;TODO whether bug?
-		invoke GetStockObject, WHITE_BRUSH
-		invoke SelectObject, stPaint.hMemDC, eax
-		invoke GetStockObject, BLACK_PEN
-		invoke SelectObject, stPaint.hMemDC, eax
+		invoke CreateCompatibleBitmap, @hDc, stRegion.dwWidth, stRegion.dwHeight
+		mov stRegion.hBitmap, eax
+
+
+		invoke _BrushWhiteBg, offset stPaint
+		;invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
+		;invoke GetStockObject, WHITE_BRUSH
+		;invoke SelectObject, stPaint.hMemDC, eax
+		;invoke GetStockObject, WHITE_PEN
+		;invoke SelectObject, stPaint.hMemDC, eax
+		;invoke Rectangle, stPaint.hMemDC, 0, 0, stPaint.dwWidth, stPaint.dwHeight;TODO whether bug?
+		;;invoke GetStockObject, WHITE_BRUSH
+		;invoke SelectObject, stPaint.hMemDC, eax
+		;invoke GetStockObject, BLACK_PEN
+		;invoke SelectObject, stPaint.hMemDC, eax
 
 	.elseif eax == WM_PAINT
 		mov	ebx,_hWnd
@@ -220,28 +253,41 @@ local	@dwPickColor: dword
 			mov		@hDc,eax
 			invoke	SelectObject, stPaint.hMemDC, stPaint.hBitmap
 			invoke	BitBlt,@hDc,0,0,stPaint.dwWidth, stPaint.dwHeight ,stPaint.hMemDC ,0,0,SRCCOPY
+			.if bInRegion != 0
+				invoke BitBlt, @hDc, 0, 0, stRegion.dwWidth, stRegion.dwHeight, stRegion.hMemDC, 0, 0, SRCAND
+			.endif 
 			invoke	EndPaint,_hWnd,addr @stPs
 		.endif
 
 	.elseif eax == WM_LBUTTONDOWN
 		mov eax,_lParam
 		and eax,0FFFFh
-		mov stPaint.stHitPoint.x,eax
+		mov stPaint.stHitPoint.x, eax
+		mov stRegion.stHitPoint.x, eax
 		mov eax,_lParam
 		shr eax,16
 		mov stPaint.stHitPoint.y,eax
-		.if bpentype == PENTYPE_PICKCOLOR
-			invoke GetDC, _hWnd
-			mov @hDc, eax
-			invoke GetPixel, @hDc,  stPaint.stHitPoint.x, stPaint.stHitPoint.y;get pixel color
-			mov dwCurColor, eax
-			invoke SendMessage, hWndColor, WM_SELECT_COLOR, 0, eax
+		mov stRegion.stHitPoint.y,eax
+		.if bInRegion != 0
+			mov stRegion.bMouseDown, TRUE
+			push stRegion.stHitPoint.x
+			push stRegion.stHitPoint.y
+			pop	stRegion.stLastMovPoint.y
+			pop	stRegion.stLastMovPoint.x
 		.else
-			mov stPaint.bMouseDown,TRUE
-			push stPaint.stHitPoint.x
-			push stPaint.stHitPoint.y
-			pop	stPaint.stLastMovPoint.y
-			pop	stPaint.stLastMovPoint.x
+			.if bpentype == PENTYPE_PICKCOLOR
+				invoke GetDC, _hWnd
+				mov @hDc, eax
+				invoke GetPixel, @hDc,  stPaint.stHitPoint.x, stPaint.stHitPoint.y;get pixel color
+				mov stPaint.dwCurColor, eax
+				invoke SendMessage, hWndColor, WM_SELECT_COLOR, 0, eax
+			.else
+				mov stPaint.bMouseDown,TRUE
+				push stPaint.stHitPoint.x
+				push stPaint.stHitPoint.y
+				pop	stPaint.stLastMovPoint.y
+				pop	stPaint.stLastMovPoint.x
+			.endif
 		.endif
 
 	.elseif eax == WM_MOUSEMOVE
@@ -252,276 +298,20 @@ local	@dwPickColor: dword
 		shr eax,16
 		mov stPaint.stMovPoint.y,eax
 		invoke _ComparePos,stPaint.stMovPoint
-		.if stPaint.bMouseDown == TRUE
-			.if bpentype == PENTYPE_PENCIL
-				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	LineTo,stPaint.hMemDC,stPaint.stMovPoint.x,stPaint.stMovPoint.y
-
-				push	stPaint.stMovPoint.x
-				push	stPaint.stMovPoint.y
-				pop		stPaint.stHitPoint.y
-				pop		stPaint.stHitPoint.x
-				invoke	DeleteObject,@hPen
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_CIRCLE
-				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	GetStockObject,NULL_BRUSH
-				mov		@hBrush,eax
-
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	SelectObject,stPaint.hMemDC,@hBrush
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	Ellipse,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stLastMovPoint.x,stPaint.stLastMovPoint.y
-				invoke	Ellipse,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stMovPoint.x,stPaint.stMovPoint.y
-
-				push	stPaint.stMovPoint.x
-				push	stPaint.stMovPoint.y
-				pop		stPaint.stLastMovPoint.y
-				pop		stPaint.stLastMovPoint.x
-
-				invoke	DeleteObject,@hPen
-				invoke	DeleteObject,@hBrush
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_RECTANGLE
-				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	GetStockObject,NULL_BRUSH
-				mov		@hBrush,eax
-
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	SelectObject,stPaint.hMemDC,@hBrush
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	Rectangle,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stLastMovPoint.x,stPaint.stLastMovPoint.y
-				invoke	Rectangle,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stMovPoint.x,stPaint.stMovPoint.y
-
-				push	stPaint.stMovPoint.x
-				push	stPaint.stMovPoint.y
-				pop		stPaint.stLastMovPoint.y
-				pop		stPaint.stLastMovPoint.x
-
-				invoke	DeleteObject,@hPen
-				invoke	DeleteObject,@hBrush
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_LINE
-				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	SelectObject,stPaint.hMemDC,@hBrush
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	LineTo,stPaint.hMemDC,stPaint.stLastMovPoint.x,stPaint.stLastMovPoint.y
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	LineTo,stPaint.hMemDC,stPaint.stMovPoint.x,stPaint.stMovPoint.y
-
-				push	stPaint.stMovPoint.x
-				push	stPaint.stMovPoint.y
-				pop		stPaint.stLastMovPoint.y
-				pop		stPaint.stLastMovPoint.x
-
-				invoke	DeleteObject,@hPen
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_ERASER	
-				invoke	SetROP2,stPaint.hMemDC,R2_WHITE
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	LineTo,stPaint.hMemDC,stPaint.stMovPoint.x,stPaint.stMovPoint.y
-
-				push	stPaint.stMovPoint.x
-				push	stPaint.stMovPoint.y
-				pop		stPaint.stHitPoint.y
-				pop		stPaint.stHitPoint.x
-				invoke	DeleteObject,@hPen
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_CIRCLE_FILLED
-				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	CreateSolidBrush,dwCurColor
-				mov		@hBrush,eax
-
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	SelectObject,stPaint.hMemDC,@hBrush
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	Ellipse,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stLastMovPoint.x,stPaint.stLastMovPoint.y
-				invoke	Ellipse,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stMovPoint.x,stPaint.stMovPoint.y
-
-				push	stPaint.stMovPoint.x
-				push	stPaint.stMovPoint.y
-				pop		stPaint.stLastMovPoint.y
-				pop		stPaint.stLastMovPoint.x
-
-				invoke	DeleteObject,@hPen
-				invoke	DeleteObject,@hBrush
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_RECTANGLE_FILLED
-				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	CreateSolidBrush,dwCurColor
-				mov		@hBrush,eax
-
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	SelectObject,stPaint.hMemDC,@hBrush
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	Rectangle,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stLastMovPoint.x,stPaint.stLastMovPoint.y
-				invoke	Rectangle,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stMovPoint.x,stPaint.stMovPoint.y
-
-				push	stPaint.stMovPoint.x
-				push	stPaint.stMovPoint.y
-				pop		stPaint.stLastMovPoint.y
-				pop		stPaint.stLastMovPoint.x
-
-				invoke	DeleteObject,@hPen
-				invoke	DeleteObject,@hBrush
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_DOT	
-				invoke	SetROP2,stPaint.hMemDC,R2_NOTXORPEN
-
-				invoke	CreatePen,PS_DOT,bpenwidth,dwCurColor
-				mov		@hPen,eax
-
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	SelectObject,stPaint.hMemDC,@hBrush
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	LineTo,stPaint.hMemDC,stPaint.stLastMovPoint.x,stPaint.stLastMovPoint.y
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	LineTo,stPaint.hMemDC,stPaint.stMovPoint.x,stPaint.stMovPoint.y
-
-				push	stPaint.stMovPoint.x
-				push	stPaint.stMovPoint.y
-				pop		stPaint.stLastMovPoint.y
-				pop		stPaint.stLastMovPoint.x
-
-				invoke	DeleteObject,@hPen
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.endif
+		.if bInRegion != 0
+			
+		.else
+			invoke _PaintMouseMove, @hPen, @hBrush, _hWnd
 		.endif
 
 	.elseif eax == WM_LBUTTONUP
-		.if stPaint.bMouseDown == TRUE
-			mov stPaint.bMouseDown,FALSE
-			mov eax,_lParam
-			and eax,0FFFFh
-			mov stPaint.stReleasePoint.x,eax
-			mov eax,_lParam
-			shr eax,16
-			mov stPaint.stReleasePoint.y,eax
-
-			.if bpentype == PENTYPE_CIRCLE;circle
-				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	GetStockObject,NULL_BRUSH
-				mov		@hBrush,eax
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	SelectObject,stPaint.hMemDC,@hBrush
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	Ellipse,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stReleasePoint.x,stPaint.stReleasePoint.y
-
-				invoke	DeleteObject,@hPen
-				invoke	DeleteObject,@hBrush
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_RECTANGLE;rectangle
-				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	GetStockObject,NULL_BRUSH
-				mov		@hBrush,eax
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	SelectObject,stPaint.hMemDC,@hBrush
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	Rectangle,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stReleasePoint.x,stPaint.stReleasePoint.y
-
-				invoke	DeleteObject,@hPen
-				invoke	DeleteObject,@hBrush
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_LINE;line
-				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	LineTo,stPaint.hMemDC,stPaint.stReleasePoint.x,stPaint.stReleasePoint.y
-
-				invoke	DeleteObject,@hPen
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_CIRCLE_FILLED;circle
-				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	CreateSolidBrush,dwCurColor
-				mov		@hBrush,eax
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	SelectObject,stPaint.hMemDC,@hBrush
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	Ellipse,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stReleasePoint.x,stPaint.stReleasePoint.y
-
-				invoke	DeleteObject,@hPen
-				invoke	DeleteObject,@hBrush
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_RECTANGLE_FILLED;rectangle
-				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
-
-				invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	CreateSolidBrush,dwCurColor
-				mov		@hBrush,eax
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	SelectObject,stPaint.hMemDC,@hBrush
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	Rectangle,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,stPaint.stReleasePoint.x,stPaint.stReleasePoint.y
-
-				invoke	DeleteObject,@hPen
-				invoke	DeleteObject,@hBrush
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.elseif bpentype == PENTYPE_DOT	;line
-				invoke	SetROP2,stPaint.hMemDC,R2_COPYPEN
-
-				invoke	CreatePen,PS_DOT,bpenwidth,dwCurColor
-				mov		@hPen,eax
-				invoke	SelectObject,stPaint.hMemDC,@hPen
-				invoke	MoveToEx,stPaint.hMemDC,stPaint.stHitPoint.x,stPaint.stHitPoint.y,NULL
-				invoke	LineTo,stPaint.hMemDC,stPaint.stReleasePoint.x,stPaint.stReleasePoint.y
-
-				invoke	DeleteObject,@hPen
-				invoke	InvalidateRect,_hWnd,0,FALSE
-				invoke	UpdateWindow,_hWnd
-			.endif
+		
+		.if bInRegion != 0
+			
+		.else
+			invoke _PaintLButtonUp, @hPen, @hBrush, _hWnd, _lParam
 		.endif
+			
 
 	.elseif eax == WM_COMMAND
 		mov eax,_wParam
@@ -530,7 +320,10 @@ local	@dwPickColor: dword
 		.elseif ax == ID_FILE_OPENFILE
 			invoke _MyOpenFile,_hWnd
 		.elseif ax == ID_FILE_CLEAR
-			invoke	_CreateBuffer,_hWnd
+			;invoke	_CreateBuffer,_hWnd, stPaint.hMemDC
+			invoke _BrushWhiteBg, offset stPaint
+			invoke	InvalidateRect, _hWnd, 0, FALSE
+			invoke	UpdateWindow, _hWnd
 		.elseif ax == ID_SHAPE_PENCIL
 			mov bpentype,PENTYPE_PENCIL
 		.elseif ax == ID_SHAPE_CIRCLE
@@ -570,17 +363,19 @@ local	@dwPickColor: dword
 			mov bpenwidth,10
 		.elseif ax == ID_COLOR_SELECT
 			invoke _MySelectColor, _hWnd
-			invoke SendMessage, hWndColor, WM_SELECT_COLOR, 0, dwCurColor
+			invoke SendMessage, hWndColor, WM_SELECT_COLOR, 0, stPaint.dwCurColor
 		.elseif ax == ID_COLOR_PICK
 			mov bpentype, PENTYPE_PICKCOLOR
+		.elseif ax == ID_REGION_SET
+			mov bInRegion, 1
 		.endif
 
 	.elseif eax == WM_CHANGE_COLOR
 		mov		eax,_lParam
-		mov		dwCurColor, eax
+		mov		stPaint.dwCurColor, eax
 		invoke	DeleteObject, @hPen
 
-		invoke	CreatePen,PS_SOLID,bpenwidth,dwCurColor
+		invoke	CreatePen,PS_SOLID,bpenwidth,stPaint.dwCurColor
 		mov		@hPen,eax
 
 	.else
