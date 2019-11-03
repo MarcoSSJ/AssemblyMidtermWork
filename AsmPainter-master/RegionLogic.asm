@@ -1,5 +1,9 @@
+;用于选区时的选区图层的绘制
+
+;当移动鼠标时,绘图的事件
 _RegionMouseMove proc uses ebx edi esi, _hPen, _hBrush, _hWnd
 	.if stRegion.bMouseDown == TRUE
+		;重新计算绘制位置
 		.if bRegionMove == TRUE
 			mov eax, stRegion.stMovPoint.x
 			mov ebx, stRegion.stMovPoint.y
@@ -37,6 +41,8 @@ _RegionMouseMove proc uses ebx edi esi, _hPen, _hBrush, _hWnd
 	ret
 _RegionMouseMove endp
 
+
+;左键松开时的选区绘制事件
 _RegionLButtonUp proc uses ebx edx esi edi, _hPen, _hBrush, _hWnd, _lParam
 	mov eax,_lParam
 	and eax,0FFFFh
@@ -69,8 +75,9 @@ _RegionLButtonUp proc uses ebx edx esi edi, _hPen, _hBrush, _hWnd, _lParam
 		pop stRegPtEnd.x
 		pop stRegPtBegin.y
 		pop stRegPtBegin.x
+		;是否是移动/复制模式
 		.if bRegionMove == TRUE
-			
+			;松开时,将buff里面的图像复制到原图像
 			invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
 			invoke SelectObject, hBuffDC, hBuffBitmap
 

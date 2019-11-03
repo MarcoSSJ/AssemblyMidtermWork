@@ -1,5 +1,10 @@
-;色彩格子界面
+;色彩格子窗口对应的代码
+;色彩各自中的颜色根据dwColors值
+;色彩格子中的每一个色块都是一个方块的子窗口
+;点击方块会传递颜色消息回主窗口
 
+;创建工具栏,完成注册并将其放置于主窗口的某一位置
+;isDock原本像用来表示他是否内嵌,后来没有实现
 ;在WM_CREATE中调用这个函数
 _CreateColorBox proc uses ebx esi edi, _hInst:HINSTANCE, _hWnd:HWND ,_isDock: DWORD
 local @rt:RECT 
@@ -104,6 +109,7 @@ local	@hParWnd: HWND
 	ret
 _WndColorBtnProc  endp
 
+;用于销毁所有的色彩格子
 _CloseAllColorBtns proc uses ebx ecx esi
 	mov		ecx,COLORS_NUM
 	shl		ecx,2
@@ -119,6 +125,8 @@ _CloseAllColorBtns proc uses ebx ecx esi
 	ret
 _CloseAllColorBtns endp
 
+
+;用于根据dwColors创建所有的色彩格子
 _CreateAllColorBtns proc uses ebx edx edi esi, _hInsthWnd, _hWnd
 local	@width: dword
 local	@hWndColor: HWND
@@ -166,6 +174,7 @@ local	@hWndColor: HWND
 	ret
 _CreateAllColorBtns endp
 
+;在dwColors中搜索是否存在某种颜色
 ;return dword index of the color
 ;0 if not found
 _SearchColorInColorBox proc uses ebx edi esi, _dwColor: dword
@@ -189,6 +198,8 @@ _SearchColorInColorBox proc uses ebx edi esi, _dwColor: dword
 	ret
 _SearchColorInColorBox endp 
 
+;更新颜色格子
+;策略:将当前输入的颜色_dwColor重新排至第一个
 _UpdateColorBox	proc uses ebx edi esi, _dwColor: dword, _hInsthWnd, _hWnd
 local	@dwTmpColor: dword
 local	@dwEndOffset: dword

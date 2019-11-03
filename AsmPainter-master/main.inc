@@ -42,6 +42,7 @@ include comdlg32.inc
 includelib comdlg32.lib
 include msvcrt.inc
 includelib msvcrt.lib
+;存储绘制图层的有关信息
 PAINTINFO STRUCT
   stHitPoint				POINT		<>
   stMovPoint				POINT		<>
@@ -62,6 +63,7 @@ WM_TAP_ICON				equ			WM_USER + 4
 
 ;IDM_OPEN				equ			30001
 ;IDM_SAVE				equ			30002
+;自定义事件信号
 ID_FILE_OPENFILE		equ			40002
 ID_FILE_SAVE			equ			40003
 ID_PEN_WIDTH1           equ         40004
@@ -92,6 +94,7 @@ ID_REGION_COPY			equ			40028
 ID_REGION_CLEAR			equ			40029
 ID_REGION_FILL			equ			40030
 
+;笔刷的种类
 PENTYPE_PENCIL			equ			0
 PENTYPE_CIRCLE			equ			1
 PENTYPE_RECTANGLE		equ			2
@@ -101,12 +104,18 @@ PENTYPE_CIRCLE_FILLED	equ			5
 PENTYPE_RECTANGLE_FILLED equ		6
 PENTYPE_DOT				equ			7
 PENTYPE_PICKCOLOR		equ			10
+
+;选择文件的文件名最大程度
 MAX_FILESIZE			equ			1000
+
+;窗口大小
 WINDOW_WIDTH			equ			800
 WINDOW_HEIGHT			equ			600
+
+;每个颜色按钮的宽
 COLOR_BUTTON_WIDTH		equ			40
 
-;ico定义
+;ico对应的编码
 IDR_MENU1               equ			100
 IDI_ICON1               equ			101
 IDI_ICON2               equ			102
@@ -137,19 +146,22 @@ IDI_ICON_SCREENSHOT     equ			126
 IDI_ICON_SET            equ			127
 IDI_ICON_ERASER			equ			128
 IDI_ICON_TITLE			equ			129
+
 ID_TOOLBAR				equ			1
 
 IDM_NEW		equ	1101
 IDM_OPEN	equ	1102
 IDM_SAVE	equ	1103
 
-
 WHITE_COLOR				equ			0ffffffh
 .data
 ;bMouseClick				db			FALSE
 
+;全局变量,笔粗细和类型
 bpenwidth				db			1
 bpentype				db			0;1：pencil, 2：circle, 3:Rectangle, 4:line, default:pencil
+
+;存储色彩格子中的24色
 dwColors				dd			01C1C1Ch,\
 									707C74h,\
 									91989Fh,\
@@ -176,6 +188,7 @@ dwColors				dd			01C1C1Ch,\
 									373C38h
 COLORS_NUM				equ			($ - offset dwColors) / 4
 
+;存储工具栏中ico对应的编号和顺序
 dwIcons					dd			IDI_ICON_LOAD,\
 									IDI_ICON_SAVE,\
 									IDI_ICON_CLEAR,\
@@ -209,42 +222,62 @@ ICON_WIDTH				equ			24
 
 
 .data?
+;全局Instance
 hInstance				dd			?
+;绘图窗口
 hWinMain				dd			?
+;绘图窗口用于接收悬浮窗口信号
 hWndSendTo				dd			?
+;色彩格子子窗口句柄
 hWndColor				dd			?
+;工具栏子窗口句柄
+hWinToolbar				dd			?
+;菜单对应的句柄
 hMenu					dd			?
+;快捷键对应的句柄 未使用
 hAccelerator			dd			?
+;色彩格子对应的句柄
 hWndColorBtns			dd			COLORS_NUM dup(?)
 
-
-
-
-;dBuffer				dd			?
-;stHitPoint				POINT		<>
-;stLastMovPoint			POINT		<>
-;stMovPoint				POINT		<>
-;stReleasePoint			POINT		<>
+;存储打开/存储文件的字符串
 szFileNameBuffer		db			MAX_FILESIZE DUP(?)
+;绘制图层
 stPaint		PAINTINFO	<>
+;选区图层
 stRegion	PAINTINFO	<>
+
+;是否使用了选区
 bInRegion				db			0
+;Region Point Begin
+;选区开始节点
 stRegPtBegin			POINT		<>
+;选区结束节点
 stRegPtEnd				POINT		<>
 
+;-------------------------------
+;是否使用了选区中的移动/复制
 bRegionMove				db			0
+;Region Move Point Start
+;鼠标点击的移动起始点
 stRegMvPtStart			POINT		<0,0>
+;鼠标移动的点差
 stRegMvPtDelta			POINT		<0,0>
+;移动/复制功能中使用临时图层来保存原图像的某一部分
 hBuffDC					HDC			?
 hBuffBitmap				HBITMAP		?
+;临时图层宽度/高度
 dwBuffWidth				dword		?
 dwBuffHeight			dword		?
-hWinToolbar				dd			?
+;---------------------------
+
 .const
+;
 szClassName				db			'MyClass',0
 szCaptionMain			db			'MyPainter',0
+;色彩格子的类
 szColorBtnClass			db			'ColorBtn', 0
 szColorBoxClass			db			'ColorBox', 0
+;工具栏的类
 szToolBtnClass			db			'ToolBtn',0
 szToolBoxClass			db			'ToolBox',0
 
@@ -255,6 +288,6 @@ szDefaultOpenFile		db			".bmp",0
 szErrorSuffixNoBmp		db			'保存格式必须以bmp结尾!',0
 szErrorNotRegion			db			'Error! 必须先选择Region Set',0
 szErrorZeroRegion		db			'Error! 必须选择有大小的Region',0
-stToolbar	equ	this byte
+
 
 

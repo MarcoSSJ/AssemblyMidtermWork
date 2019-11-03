@@ -1,33 +1,4 @@
-;匈牙利命名法
-;	b,w,dw	表示变量是byte,word,dword
-;	h		表示句柄
-;	p/lp		表示指针
-;	sz		表示字符串
-;	lpsz	表示字符串指针
-;	f		表示浮点数
-;	st		表示一个数据结构
-;	变量类型+变量名,开头小写,后面大写
-;命名规范!
-;	宏变量用大写+下划线
-;	全局变量用匈牙利命名法
-;	参数用_开头
-;	局部变量用@开头
-;	自定义函数开头必须加下划线!
-;	指令和寄存器用小写
-;代码规范
-;	局部变量地址使用addr/lea,全局变量地址使用offset
-;	全局变量定义在.inc中
-;	引用库函数定义在.inc中
-;	使用equ而不是=
-;	使用db,dw,dd而不是byte,word,dword
-;	跳转使用@@ 和 @B(前面第一个@@) 和@F(后面第一个@@)
-;	子函数请使用proc,uses,local等伪指令
-;缩进规范
-;	一般变量和标号定义前无缩进
-;	一整块的指令要用tab对齐
-;	分支或循环再缩进一格
-;避免事项
-;	避免使用宏
+;主函数 程序的入口
 .386
 .model flat,stdcall
 option casemap:none
@@ -43,6 +14,7 @@ include ColorBox.asm
 include	FileStream.asm
 include ToolBar.asm
 
+;打开windows自带的文档选择窗口,将名称放入szFileNameBuffer,用于保存
 _MySaveFile proc uses edx ebx _hWnd:HWND
 	invoke _GetSaveFileName, offset szFileNameBuffer
 	.if  (!eax)
@@ -54,6 +26,7 @@ _MySaveFile proc uses edx ebx _hWnd:HWND
 	ret
 _MySaveFile endp
 
+;保存,打开windows自带的文档选择窗口,将名称放入szFileNameBuffer,然后读取放进stPaint中
 _MyOpenFile proc _hWnd:HWND
 local @hDC:HDC
 local @hTmpDC: HDC
@@ -89,6 +62,7 @@ local @hTmpBmp:HBITMAP
 	ret
 _MyOpenFile endp
 
+;打开windows自带的选择颜色窗口,返回选择的颜色
 _MySelectColor proc _hWnd:HWND
 local @myColor:CHOOSECOLOR
 
@@ -110,6 +84,7 @@ local @myColor:CHOOSECOLOR
 	ret
 _MySelectColor endp
 
+;检查鼠标是否出界
 _ComparePos proc uses eax ebx,hPoint:POINT
 	mov		eax,hPoint.x
 	mov		ebx,1
@@ -134,6 +109,7 @@ L1:
 	ret
 _ComparePos endp
 
+;初始化HDC
 _CreateBuffer proc uses ecx,_hWnd, _hMemDC
 local	@hDc:HDC
 local	@hBitMap:HBITMAP
@@ -155,6 +131,7 @@ local	@hPen:HPEN
 	ret
 _CreateBuffer endp
 
+;建立菜单
 _CreateMenu proc uses eax,_hIns:HINSTANCE
 	invoke	LoadMenu,_hIns,IDR_MENU1
 	mov		hMenu,eax
@@ -182,6 +159,7 @@ _BrushWhiteBg proc uses ebx ecx, _lpStPaint: ptr PAINTINFO
 	ret
 _BrushWhiteBg endp
 
+;用某种颜色填充HDC的某个方形区域
 _FillWithColor proc uses ebx ecx edi esi, _hDC, _dwColor, _dwStartX, _dwStartY, _dwEndX, _dwEndY, _hWnd, _bUpdate
 local @hBitmap: HBITMAP
 local @hPen:	HPEN
@@ -205,7 +183,7 @@ local @hBrush:	HBRUSH
 	ret
 _FillWithColor endp
 
-;看是否begin 比 end 大
+;看是否begin 比 end 大,不是则将其exchange
 _CheckRightBeginEnd proc uses ebx
 	mov eax, stRegPtEnd.x
 	mov ebx, stRegPtBegin.x
@@ -293,6 +271,7 @@ local	@dwPickColor: dword
 			mov		@hDc,eax
 			invoke	SelectObject, stPaint.hMemDC, stPaint.hBitmap
 			invoke	BitBlt,@hDc,0,0,stPaint.dwWidth, stPaint.dwHeight ,stPaint.hMemDC ,0,0,SRCCOPY
+			;选择区域的时候,要在绘图层上方多绘制选区图形
 			.if bInRegion != 0
 				.if bRegionMove == FALSE
 					invoke  BitBlt, @hDc, 0, 0, stRegion.dwWidth, stRegion.dwHeight, stRegion.hMemDC, 0, 0, SRCAND					
@@ -328,6 +307,7 @@ local	@dwPickColor: dword
 			pop	stRegion.stLastMovPoint.y
 			pop	stRegion.stLastMovPoint.x
 		.else
+			;如果当前在选择颜色
 			.if bpentype == PENTYPE_PICKCOLOR
 				invoke GetDC, _hWnd
 				mov @hDc, eax
@@ -453,6 +433,7 @@ local	@dwPickColor: dword
 
 
 		.elseif ax == ID_REGION_COPY
+				;将绘制图层的内容复制到一个buff图层中
 				invoke _CheckRightBeginEnd  
 				mov eax, stRegPtEnd.x
 				sub eax, stRegPtBegin.x
@@ -469,6 +450,9 @@ local	@dwPickColor: dword
 				invoke BitBlt, hBuffDC, 0, 0, dwBuffWidth, dwBuffHeight, stPaint.hMemDC, stRegPtBegin.x, stRegPtBegin.y, SRCCOPY
 				mov bRegionMove, TRUE
 		.elseif ax == ID_REGION_MOVE
+				;将绘制图层的内容复制到一个buff图层中
+				;然后将绘制图层对应的方形区域清空
+				;表现成移动
 				invoke _CheckRightBeginEnd  
 				mov    bRegionMove, TRUE
 				mov eax, stRegPtEnd.x
@@ -569,22 +553,16 @@ local	@stMsg:MSG
 	;  在此函数中，我们在全局变量中保存实例句柄并
 	;  创建和显示主程序窗口。
 
-	;WS_EX_CLIENTEDGE预置的一种样式
 	invoke	CreateWindowEx,WS_EX_CLIENTEDGE,
 			offset szClassName,offset szCaptionMain,
 			WS_OVERLAPPEDWINDOW and not WS_MAXIMIZEBOX and not WS_THICKFRAME,
 			0,0,WINDOW_WIDTH,WINDOW_HEIGHT,
 			NULL,NULL,hInstance,NULL
 	mov		hWinMain,eax
-	;invoke _CreateToolbar,hWinMain,hInstance
-	;invoke LoadAccelerators,hInstance,IDR_ACCELERATOR
-	;mov hAccelerator,eax
+
 	invoke	ShowWindow,hWinMain,SW_SHOWNORMAL;SW_SHOWNORMAL sets the window state to restored and makes the window visible. SW_HIDE
 	invoke	UpdateWindow,hWinMain
 
-
-
-	;invoke LoadAccelerators,hInstance,IDA_MENU;IDA_MENU在rc中定义,为快捷键
 	mov		hAccelerator,eax
 
 	;消息循环

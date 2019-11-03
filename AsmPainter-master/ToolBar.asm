@@ -1,5 +1,9 @@
-;工具栏
+;工具栏窗口对应的代码
+;工具栏中的每一个工具都是一个bmp构成的图标子窗口
+;点击图标会传递消息回主窗口
 
+;创建工具栏,完成注册并将其放置于主窗口的某一位置
+;isDock原本像用来表示他是否内嵌,后来没有实现
 _CreateToolBox proc uses ebx esi edi, _hInst:HINSTANCE, _hWnd:HWND ,_isDock: DWORD
 local @rt:RECT 
 local @pt1:POINT
@@ -38,7 +42,7 @@ _CreateToolBox endp
 
 
 
-;tool格子(窗口)对应的事件循环
+;tool中每一个的格子(窗口)对应的事件循环
 _WndToolBtnProc proc uses ebx edi esi,_hWnd,_stMsg,_wParam,_lParam
 local	@ps:PAINTSTRUCT
 local	@hdc:HDC 

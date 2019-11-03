@@ -1,3 +1,6 @@
+;绘图事件响应的一些函数
+
+;当移动鼠标时,绘图的事件
 _PaintMouseMove proc uses ebx edi esi, _hPen, _hBrush, _hWnd
 	.if stPaint.bMouseDown == TRUE
 		.if bpentype == PENTYPE_PENCIL
@@ -171,6 +174,8 @@ _PaintMouseMove proc uses ebx edi esi, _hPen, _hBrush, _hWnd
 	ret
 _PaintMouseMove endp
 
+
+;当左键鼠标松开时,绘图的事件
 _PaintLButtonUp proc uses ebx edx esi edi, _hPen, _hBrush, _hWnd, _lParam
 	.if stPaint.bMouseDown == TRUE
 			mov stPaint.bMouseDown,FALSE
