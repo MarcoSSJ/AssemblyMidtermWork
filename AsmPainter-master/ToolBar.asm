@@ -128,6 +128,60 @@ local @dwSend: dword
 		mov	eax, _lParam
 		.if eax == IDI_ICON_LOAD
 			mov @dwSend, ID_FILE_OPENFILE
+		.elseif eax == IDI_ICON_SAVE
+			mov @dwSend, ID_FILE_SAVE
+		.elseif eax == IDI_ICON_CLEAR
+			mov @dwSend, ID_FILE_CLEAR
+		.elseif eax == IDI_ICON1
+			mov @dwSend, ID_PEN_WIDTH1
+		.elseif eax == IDI_ICON2
+			mov @dwSend, ID_PEN_WIDTH2
+		.elseif eax == IDI_ICON3
+			mov @dwSend, ID_PEN_WIDTH3
+		.elseif eax == IDI_ICON4
+			mov @dwSend, ID_PEN_WIDTH4
+		.elseif eax == IDI_ICON5
+			mov @dwSend, ID_PEN_WIDTH5
+		.elseif eax == IDI_ICON6
+			mov @dwSend, ID_PEN_WIDTH6
+		.elseif eax == IDI_ICON7
+			mov @dwSend, ID_PEN_WIDTH7
+		.elseif eax == IDI_ICON8
+			mov @dwSend, ID_PEN_WIDTH8
+		.elseif eax == IDI_ICON9
+			mov @dwSend, ID_PEN_WIDTH9
+		.elseif eax == IDI_ICON_CIRCLE
+			mov @dwSend, ID_SHAPE_CIRCLE
+		.elseif eax == IDI_ICON_CIRCLEF
+			mov @dwSend, ID_SHAPE_CIRCLE_FILLED
+		.elseif eax == IDI_ICON_RECT
+			mov @dwSend, ID_SHAPE_RECTANGLE
+		.elseif eax == IDI_ICON_RECTF
+			mov @dwSend, ID_SHAPE_RECTANGLE_FILLED
+		.elseif eax == IDI_ICON_LINE
+			mov @dwSend, ID_SHAPE_LINE
+		.elseif eax == IDI_ICON_DOTTED
+			mov @dwSend, ID_SHAPE_DOT
+		.elseif eax == IDI_ICON_PENCIL
+			mov @dwSend, ID_SHAPE_PENCIL
+		.elseif eax == IDI_ICON_ERASER
+			mov @dwSend, ID_SHAPE_ERASER
+		.elseif eax == IDI_ICON_COLOR
+			mov @dwSend, ID_COLOR_SELECT
+		.elseif eax == IDI_ICON_PICK
+			mov @dwSend, ID_COLOR_PICK
+		.elseif eax == IDI_ICON_SET
+			mov @dwSend, ID_REGION_SET
+		.elseif eax == IDI_ICON_FILL
+			mov @dwSend, ID_REGION_FILL
+		.elseif eax == IDI_ICON_SCREENSHOT
+			mov @dwSend, ID_REGION_SAVE
+		.elseif eax == IDI_ICON_CLEARR
+			mov @dwSend, ID_REGION_CLEAR
+		.elseif eax == IDI_ICON_MOVE
+			mov @dwSend, ID_REGION_MOVE
+		.elseif eax == IDI_ICON_COPY
+			mov @dwSend, ID_REGION_COPY
 		.endif
 		invoke	SendMessage,hWndSendTo,WM_COMMAND, @dwSend, _lParam;´«µÝWM_CHANGE_COLORÐÅºÅ
 	.elseif eax == WM_DESTROY

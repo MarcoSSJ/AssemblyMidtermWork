@@ -78,7 +78,7 @@ ID_SHAPE_CIRCLE         equ         40014
 ID_SHAPE_RECTANGLE      equ         40015
 ID_SHAPE_LINE           equ         40016
 ID_SHAPE_PENCIL         equ         40017
-ID_SHAPE_EARSER         equ         40018
+ID_SHAPE_ERASER         equ         40018
 ID_SHAPE_CIRCLE_FILLED    equ       40019
 ID_SHAPE_RECTANGLE_FILLED equ       40020
 ID_SHAPE_DOT            equ         40021

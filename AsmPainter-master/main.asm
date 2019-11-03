@@ -386,7 +386,7 @@ local	@dwPickColor: dword
 			mov bpentype,PENTYPE_RECTANGLE
 		.elseif ax == ID_SHAPE_LINE
 			mov bpentype,PENTYPE_LINE
-		.elseif ax == ID_SHAPE_EARSER
+		.elseif ax == ID_SHAPE_ERASER
 			mov bpentype,PENTYPE_ERASER
 		.elseif ax == ID_SHAPE_CIRCLE_FILLED
 			mov bpentype,PENTYPE_CIRCLE_FILLED
