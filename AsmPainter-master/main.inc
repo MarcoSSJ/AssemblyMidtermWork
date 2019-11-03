@@ -150,30 +150,30 @@ WHITE_COLOR				equ			0ffffffh
 
 bpenwidth				db			1
 bpentype				db			0;1£ºpencil, 2£ºcircle, 3:Rectangle, 4:line, default:pencil
-dwColors				dd			0h,\
-									0c0c0c0h,\
-									0808080h,\
-									0ff0000h,\
-									0800000h,\
-									0ffff00h,\
-									0808000h,\
-									0ff00h,\
-									08000h,\
-									0ffffh,\
-									08080h,\
-									0ffh,\
-									080h,\
-									0ff00ffh,\
-									0800080h,\
-									0ffff80h,\
-									0808040h,\
-									0ff80h,\
-									04040h,\
-									080ffffh,\
-									080ffh,\
-									08080ffh,\
-									04080h,\
-									0ff0080h
+dwColors				dd			01C1C1Ch,\
+									707C74h,\
+									91989Fh,\
+									0FFFFFBh,\
+									0E03C8Ah,\
+									0B481BBh,\
+									0B28FCEh,\
+									7B90D2h,\
+									3A8FB7h,\
+									81C7D4h,\
+									00896Ch,\
+									0A8D8B9h,\
+									86C166h,\
+									0F7D94Ch,\
+									0EFBB24h,\
+									0FFBA84h,\
+									0E83015h,\
+									0FEDFE1h,\
+									0C73E3Ah,\
+									0B9887Dh,\
+									0D7C4BBh,\
+									0B4A582h,\
+									072636Eh,\
+									373C38h
 COLORS_NUM				equ			($ - offset dwColors) / 4
 
 dwIcons					dd			IDI_ICON_LOAD,\
