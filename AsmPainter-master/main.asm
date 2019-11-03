@@ -205,6 +205,26 @@ local @hBrush:	HBRUSH
 	ret
 _FillWithColor endp
 
+;看是否begin 比 end 大
+_CheckRightBeginEnd proc uses ebx
+	mov eax, stRegPtEnd.x
+	mov ebx, stRegPtBegin.x
+	.if eax < ebx
+		mov stRegPtBegin.x, eax
+		mov stRegPtEnd.x, ebx
+	.endif
+	
+	mov eax, stRegPtEnd.y
+	mov ebx, stRegPtBegin.y
+	.if eax < ebx
+		mov stRegPtBegin.y, eax
+		mov stRegPtEnd.y, ebx
+	.endif
+
+	ret
+_CheckRightBeginEnd endp
+
+
 ;窗口过程
 _ProcWinMain proc uses ebx edi esi,_hWnd,_stMsg,_wParam,_lParam
 local	@stPs:PAINTSTRUCT
@@ -432,6 +452,7 @@ local	@dwPickColor: dword
 				mov bInRegion, FALSE
 
 		.elseif ax == ID_REGION_COPY
+				invoke _CheckRightBeginEnd  
 				mov eax, stRegPtEnd.x
 				sub eax, stRegPtBegin.x
 				mov dwBuffWidth, eax
@@ -447,6 +468,8 @@ local	@dwPickColor: dword
 				invoke BitBlt, hBuffDC, 0, 0, dwBuffWidth, dwBuffHeight, stPaint.hMemDC, stRegPtBegin.x, stRegPtBegin.y, SRCCOPY
 				mov bRegionMove, TRUE
 		.elseif ax == ID_REGION_MOVE
+				invoke _CheckRightBeginEnd  
+				mov    bRegionMove, TRUE
 				mov eax, stRegPtEnd.x
 				sub eax, stRegPtBegin.x
 				mov dwBuffWidth, eax
@@ -460,8 +483,9 @@ local	@dwPickColor: dword
 				invoke SelectObject, stPaint.hMemDC, stPaint.hBitmap
 				invoke SelectObject, hBuffDC, hBuffBitmap
 				invoke BitBlt, hBuffDC, 0, 0, dwBuffWidth, dwBuffHeight, stPaint.hMemDC, stRegPtBegin.x, stRegPtBegin.y, SRCCOPY
-				mov    bRegionMove, TRUE
+
 				invoke _FillWithColor, stPaint.hMemDC, WHITE_COLOR, stRegPtBegin.x, stRegPtBegin.y, stRegPtEnd.x, stRegPtEnd.y, _hWnd, FALSE
+				mov bRegionMove, TRUE
 		.elseif ax == ID_REGION_CLEAR
 			
 			invoke _FillWithColor, stPaint.hMemDC, WHITE_COLOR, stRegPtBegin.x, stRegPtBegin.y, stRegPtEnd.x, stRegPtEnd.y, _hWnd, TRUE
@@ -482,6 +506,7 @@ local	@dwPickColor: dword
 
 	.elseif eax ==WM_REGION_SAVEFILE
 		
+		invoke _CheckRightBeginEnd
 		push stRegPtBegin.x
 		push stRegPtBegin.y
 		push stRegPtEnd.x
