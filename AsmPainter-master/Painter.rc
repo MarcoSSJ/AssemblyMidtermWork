@@ -107,70 +107,108 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON1               ICON                    "res\\1.ico"
-IDI_ICON2               ICON                    "res\\2.ico"
-IDI_ICON3               ICON                    "res\\3.ico"
-IDI_ICON4               ICON                    "res\\4.ico"
-IDI_ICON5               ICON                    "res\\5.ico"
-IDI_ICON6               ICON                    "res\\6.ico"
-IDI_ICON7               ICON                    "res\\7.ico"
-IDI_ICON8               ICON                    "res\\8.ico"
-IDI_ICON9               ICON                    "res\\9.ico"
-IDI_ICON_CIRCLE              ICON                    "res\\circle.ico"
-IDI_ICON_CIRCLEF              ICON                    "res\\circle_filled.ico"
-IDI_ICON_CLEARR              ICON                    "res\\clear_region.ico"
-IDI_ICON_CLEAR            ICON                    "res\\clear.ico"
-IDI_ICON_COLOR              ICON                    "res\\color.ico"
-IDI_ICON_COPY              ICON                    "res\\copy.ico"
-IDI_ICON_DOTTED              ICON                    "res\\dotted_line.ico"
-IDI_ICON_FILL              ICON                    "res\\fill.ico"
-IDI_ICON_LINE              ICON                    "res\\line.ico"
-IDI_ICON_LOAD              ICON                    "res\\load.ico"
-IDI_ICON_MOVE              ICON                    "res\\move.ico"
-IDI_ICON_PENCIL              ICON                    "res\\pencil.ico"
-IDI_ICON_PICK              ICON                    "res\\pick.ico"
-IDI_ICON_RECT              ICON                    "res\\rectangle.ico"
-IDI_ICON_RECTF              ICON                    "res\\rectangle_filled.ico"
-IDI_ICON_SAVE              ICON                    "res\\save.ico"
-IDI_ICON_SCREENSHOT              ICON                    "res\\screenshot.ico"
-IDI_ICON_SET              ICON                    "res\\set.ico"
-////////////////////////////////////////////////////////////////////////////
-//toolbar
-////////////////////////////////////////////////////////////////////////////
-stringtable	discardable
-BEGIN
-ID_FILE_OPENFILE		"打开文件"
-ID_FILE_SAVE			"保存文件"
-ID_FILE_CLEAR			"清空画面"
-ID_PEN_WIDTH1			"1"
-ID_PEN_WIDTH2			"2"
-ID_PEN_WIDTH3			"3"          
-ID_PEN_WIDTH4			"4"
-ID_PEN_WIDTH5			"5"
-ID_PEN_WIDTH6			"6"
-ID_PEN_WIDTH7           "7"
-ID_PEN_WIDTH8			"8"
-ID_PEN_WIDTH9           "9"
-ID_SHAPE_CIRCLE         "空心圆"
-ID_SHAPE_RECTANGLE		"空心方"
-ID_SHAPE_LINE			"实线"
-ID_SHAPE_PENCIL			"铅笔"
-ID_SHAPE_EARSER			"橡皮"
-ID_SHAPE_CIRCLE_FILLED	"实心圆"
-ID_SHAPE_RECTANGLE_FILLED "实心方"
-ID_SHAPE_DOT			"虚线"
-ID_COLOR_SELECT			"调色"
-ID_COLOR_PICK			"取色"
-ID_REGION_SET			"选区"
-ID_REGION_SAVE			"选区保存"
-ID_REGION_MOVE			"选区移动"
-ID_REGION_COPY			"选区复制"
-ID_REGION_CLEAR			"选区擦除"
-ID_REGION_FILL			"选取填充"
-IDM_NEW "新建文件"
-IDM_OPEN "打开文件"
-IDM_SAVE "保存文件"
 
+IDI_ICON2               ICON                    "res\\2.ico"
+
+IDI_ICON3               ICON                    "res\\3.ico"
+
+IDI_ICON4               ICON                    "res\\4.ico"
+
+IDI_ICON5               ICON                    "res\\5.ico"
+
+IDI_ICON6               ICON                    "res\\6.ico"
+
+IDI_ICON7               ICON                    "res\\7.ico"
+
+IDI_ICON8               ICON                    "res\\8.ico"
+
+IDI_ICON9               ICON                    "res\\9.ico"
+
+IDI_ICON_CIRCLE         ICON                    "res\\circle.ico"
+
+IDI_ICON_CIRCLEF        ICON                    "res\\circle_filled.ico"
+
+IDI_ICON_CLEARR         ICON                    "res\\clear_region.ico"
+
+IDI_ICON_CLEAR          ICON                    "res\\clear.ico"
+
+IDI_ICON_COLOR          ICON                    "res\\color.ico"
+
+IDI_ICON_COPY           ICON                    "res\\copy.ico"
+
+IDI_ICON_DOTTED         ICON                    "res\\dotted_line.ico"
+
+IDI_ICON_FILL           ICON                    "res\\fill.ico"
+
+IDI_ICON_LINE           ICON                    "res\\line.ico"
+
+IDI_ICON_LOAD           BITMAP                    "res\\load.bmp"
+
+IDI_ICON_MOVE           ICON                    "res\\move.ico"
+
+IDI_ICON_PENCIL         ICON                    "res\\pencil.ico"
+
+IDI_ICON_PICK           ICON                    "res\\pick.ico"
+
+IDI_ICON_RECT           ICON                    "res\\rectangle.ico"
+
+IDI_ICON_RECTF          ICON                    "res\\rectangle_filled.ico"
+
+IDI_ICON_SAVE           BITMAP                    "res\\save.bmp"
+
+IDI_ICON_SCREENSHOT     ICON                    "res\\screenshot.ico"
+
+IDI_ICON_SET            ICON                    "res\\set.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    ID_FILE_OPENFILE        "打开文件"
+    ID_FILE_SAVE            "保存文件"
+    ID_PEN_WIDTH1           "1"
+    ID_PEN_WIDTH2           "2"
+    ID_PEN_WIDTH3           "3"
+    ID_PEN_WIDTH4           "4"
+    ID_PEN_WIDTH5           "5"
+    ID_PEN_WIDTH6           "6"
+    ID_PEN_WIDTH7           "7"
+    ID_PEN_WIDTH8           "8"
+    ID_PEN_WIDTH9           "9"
+    ID_SHAPE_CIRCLE         "空心圆"
+    ID_SHAPE_RECTANGLE      "空心方"
 END
+
+STRINGTABLE
+BEGIN
+    ID_SHAPE_LINE           "实线"
+    ID_SHAPE_PENCIL         "铅笔"
+    ID_SHAPE_EARSER         "橡皮"
+    ID_SHAPE_CIRCLE_FILLED  "实心圆"
+    ID_SHAPE_RECTANGLE_FILLED "实心方"
+    ID_SHAPE_DOT            "虚线"
+    ID_COLOR_SELECT         "调色"
+    ID_COLOR_PICK           "取色"
+    ID_FILE_CLEAR           "清空画面"
+    ID_REGION_SET           "选区"
+    ID_REGION_SAVE          "选区保存"
+    ID_REGION_MOVE          "选区移动"
+    ID_REGION_COPY          "选区复制"
+    ID_REGION_CLEAR         "选区擦除"
+    ID_REGION_FILL          "选取填充"
+END
+
+STRINGTABLE
+BEGIN
+    IDM_NEW                 "新建文件"
+    IDM_OPEN                "打开文件"
+    IDM_SAVE                "保存文件"
+END
+
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 

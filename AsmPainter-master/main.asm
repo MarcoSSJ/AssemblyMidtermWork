@@ -41,6 +41,7 @@ include RegionLogic.asm
 include PaintLogic.asm
 include ColorBox.asm
 include	FileStream.asm
+include ToolBar.asm
 
 _MySaveFile proc uses edx ebx _hWnd:HWND
 	invoke _GetSaveFileName, offset szFileNameBuffer
@@ -229,6 +230,8 @@ local	@dwPickColor: dword
 
 		invoke	_CreateColorBox,hInstance,_hWnd,0
 		mov		hWndColor,	eax
+		invoke	_CreateToolBox, hInstance, _hWnd, 0
+		
 		invoke	GetClientRect, _hWnd, addr @stRect
 
 		mov	ebx, @stRect.right
@@ -527,6 +530,7 @@ local	@stMsg:MSG
 	mov		@stWndClass.lpszMenuName,IDR_MENU1
 	invoke	RegisterClassEx,addr @stWndClass
 	invoke	_RegisterColorClass, hInstance
+	invoke	_RegisterToolClass, hInstance
 
 	;//   函数:  InitInstance(HINSTANCE, int)
 	;  目的:  保存实例句柄并创建主窗口

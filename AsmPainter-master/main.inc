@@ -58,6 +58,7 @@ PAINTINFO ENDS
 WM_CHANGE_COLOR			equ			WM_USER + 1
 WM_SELECT_COLOR			equ			WM_USER + 2
 WM_REGION_SAVEFILE		equ			WM_USER + 3
+WM_TAP_ICON				equ			WM_USER + 4
 IDR_MENU1               equ			101
 ;IDM_OPEN				equ			30001
 ;IDM_SAVE				equ			30002
@@ -106,33 +107,33 @@ WINDOW_HEIGHT			equ			600
 COLOR_BUTTON_WIDTH		equ			40
 
 ;ico定义
-IDI_ICON1               equ			1001
-IDI_ICON2               equ			1002
-IDI_ICON3               equ			1003
-IDI_ICON4               equ			1004
-IDI_ICON5               equ			1005
-IDI_ICON6               equ			1006
-IDI_ICON7               equ			1007
-IDI_ICON8               equ			1008
-IDI_ICON9               equ			1009
-IDI_ICON_CIRCLE         equ			1010
-IDI_ICON_CIRCLEF        equ			1011
-IDI_ICON_CLEARR         equ			1012
-IDI_ICON_CLEAR          equ			1013
-IDI_ICON_COLOR          equ			1014
-IDI_ICON_COPY           equ			1015
-IDI_ICON_DOTTED         equ			1016
-IDI_ICON_FILL           equ			1017
-IDI_ICON_LINE           equ			1018
-IDI_ICON_LOAD           equ			1019
-IDI_ICON_MOVE           equ			1020
-IDI_ICON_PENCIL         equ			1021
-IDI_ICON_PICK           equ			1022
-IDI_ICON_RECT           equ			1023
-IDI_ICON_RECTF          equ			1024
-IDI_ICON_SAVE           equ			1025
-IDI_ICON_SCREENSHOT     equ			1026
-IDI_ICON_SET            equ			1027
+IDI_ICON1               equ			101
+IDI_ICON2               equ			102
+IDI_ICON3               equ			103
+IDI_ICON4               equ			104
+IDI_ICON5               equ			105
+IDI_ICON6               equ			106
+IDI_ICON7               equ			107
+IDI_ICON8               equ			108
+IDI_ICON9               equ			109
+IDI_ICON_CIRCLE         equ			110
+IDI_ICON_CIRCLEF        equ			111
+IDI_ICON_CLEARR         equ			112
+IDI_ICON_CLEAR          equ			113
+IDI_ICON_COLOR          equ			114
+IDI_ICON_COPY           equ			115
+IDI_ICON_DOTTED         equ			116
+IDI_ICON_FILL           equ			117
+IDI_ICON_LINE           equ			118
+IDI_ICON_LOAD           equ			119
+IDI_ICON_MOVE           equ			120
+IDI_ICON_PENCIL         equ			121
+IDI_ICON_PICK           equ			122
+IDI_ICON_RECT           equ			123
+IDI_ICON_RECTF          equ			124
+IDI_ICON_SAVE           equ			125
+IDI_ICON_SCREENSHOT     equ			126
+IDI_ICON_SET            equ			127
 
 ID_TOOLBAR				equ			1
 
@@ -173,6 +174,12 @@ dwColors				dd			0h,\
 									0ff0080h
 COLORS_NUM				equ			($ - offset dwColors) / 4
 
+dwIcons					dd			IDI_ICON_LOAD,\
+									IDI_ICON_SAVE
+ICON_NUM				equ			($ - offset dwIcons) / 4
+ICON_WIDTH				equ			24
+
+
 .data?
 hInstance				dd			?
 hWinMain				dd			?
@@ -210,6 +217,9 @@ szClassName				db			'MyClass',0
 szCaptionMain			db			'MyPainter',0
 szColorBtnClass			db			'ColorBtn', 0
 szColorBoxClass			db			'ColorBox', 0
+szToolBtnClass			db			'ToolBtn',0
+szToolBoxClass			db			'ToolBox',0
+
 szFilter				db			"BitMap(*.bmp)",0,"*.bmp",0
 szOtherBmp				db			".bmp",0
 szDefaultSaveFile		db			"1.bmp",0
@@ -218,12 +228,5 @@ szErrorSuffixNoBmp		db			'保存格式必须以bmp结尾!',0
 szErrorNotRegion			db			'Error! 必须先选择Region Set',0
 szErrorZeroRegion		db			'Error! 必须选择有大小的Region',0
 stToolbar	equ	this byte
-;TBBUTTON	<IDI_ICON_LOAD,ID_FILE_OPENFILE,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;TBBUTTON	<IDI_ICON_SAVE,ID_FILE_SAVE,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;TBBUTTON	<IDI_ICON_CLEAR, ID_FILE_CLEAR,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;TBBUTTON	<0,0,TBSTATE_ENABLED,TBSTYLE_SEP,0,0,-1>
-TBBUTTON	<STD_FILENEW,IDM_NEW,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-TBBUTTON	<STD_FILEOPEN,IDM_OPEN,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-TBBUTTON	<STD_FILESAVE,IDM_SAVE,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-TBBUTTON	<0,0,TBSTATE_ENABLED,TBSTYLE_SEP,0,0,-1>
-NUM_BUTTONS	EQU	4
+
+
