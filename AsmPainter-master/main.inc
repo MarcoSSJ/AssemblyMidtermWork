@@ -59,7 +59,7 @@ WM_CHANGE_COLOR			equ			WM_USER + 1
 WM_SELECT_COLOR			equ			WM_USER + 2
 WM_REGION_SAVEFILE		equ			WM_USER + 3
 WM_TAP_ICON				equ			WM_USER + 4
-IDR_MENU1               equ			101
+
 ;IDM_OPEN				equ			30001
 ;IDM_SAVE				equ			30002
 ID_FILE_OPENFILE		equ			40002
@@ -107,6 +107,7 @@ WINDOW_HEIGHT			equ			600
 COLOR_BUTTON_WIDTH		equ			40
 
 ;ico∂®“Â
+IDR_MENU1               equ			100
 IDI_ICON1               equ			101
 IDI_ICON2               equ			102
 IDI_ICON3               equ			103
@@ -134,7 +135,8 @@ IDI_ICON_RECTF          equ			124
 IDI_ICON_SAVE           equ			125
 IDI_ICON_SCREENSHOT     equ			126
 IDI_ICON_SET            equ			127
-
+IDI_ICON_ERASER			equ			128
+IDI_ICON_TITLE			equ			129
 ID_TOOLBAR				equ			1
 
 IDM_NEW		equ	1101
@@ -175,7 +177,33 @@ dwColors				dd			0h,\
 COLORS_NUM				equ			($ - offset dwColors) / 4
 
 dwIcons					dd			IDI_ICON_LOAD,\
-									IDI_ICON_SAVE
+									IDI_ICON_SAVE,\
+									IDI_ICON_CLEAR,\
+									IDI_ICON_PENCIL,\
+									IDI_ICON_ERASER,\
+									IDI_ICON_RECT,\
+									IDI_ICON_CIRCLE,\
+									IDI_ICON_LINE,\
+									IDI_ICON_RECTF,\
+									IDI_ICON_CIRCLEF
+dwIcons1						dd	IDI_ICON_DOTTED,\
+									IDI_ICON_COLOR,\
+									IDI_ICON_PICK,\
+									IDI_ICON_SET,\
+									IDI_ICON_CLEARR,\
+									IDI_ICON_FILL,\
+									IDI_ICON_MOVE,\
+									IDI_ICON_COPY,\
+									IDI_ICON_SCREENSHOT
+dwIcons2				dd			IDI_ICON1,\
+									IDI_ICON2,\
+									IDI_ICON3,\
+									IDI_ICON4,\
+									IDI_ICON5,\
+									IDI_ICON6,\
+									IDI_ICON7,\
+									IDI_ICON8,\
+									IDI_ICON9
 ICON_NUM				equ			($ - offset dwIcons) / 4
 ICON_WIDTH				equ			24
 

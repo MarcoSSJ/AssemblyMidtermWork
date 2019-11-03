@@ -517,6 +517,10 @@ local	@stMsg:MSG
 	;
 	; 目标: 注册窗口类。
 	;
+	invoke	LoadIcon,hInstance,IDI_ICON_TITLE
+	mov		@stWndClass.hIcon, eax
+	mov		@stWndClass.hIconSm, eax
+
 	invoke	LoadCursor,0,IDC_ARROW
 	mov		@stWndClass.hCursor,eax
 	push	hInstance
@@ -528,7 +532,9 @@ local	@stMsg:MSG
 	;COLOR_BACKGROUND COLOR_HIGHLIGHT COLOR_MENU COLOR_WINDOW..预置
 	mov		@stWndClass.lpszClassName,offset szClassName
 	mov		@stWndClass.lpszMenuName,IDR_MENU1
+
 	invoke	RegisterClassEx,addr @stWndClass
+
 	invoke	_RegisterColorClass, hInstance
 	invoke	_RegisterToolClass, hInstance
 

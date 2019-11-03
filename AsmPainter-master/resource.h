@@ -30,6 +30,8 @@
 #define IDI_ICON_SAVE                   125
 #define IDI_ICON_SCREENSHOT             126
 #define IDI_ICON_SET                    127
+#define IDI_ICON_ERASER					128
+#define IDI_ICON_TITLE					129
 #define IDM_NEW                         1101
 #define IDM_OPEN                        1102
 #define IDM_SAVE                        1103

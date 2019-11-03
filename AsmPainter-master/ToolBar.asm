@@ -8,8 +8,8 @@ local @hWndColorBox:HWND
 local @rtWidth, @rtHeight: dword
 	mov		@pt1.x,100
 	mov		@pt1.y,100
-	mov		@pt2.x,128
-	mov		@pt2.y,324
+	mov		@pt2.x,130
+	mov		@pt2.y,776
 	invoke	ClientToScreen,	_hWnd,addr @pt1
 	invoke	ClientToScreen, _hWnd,addr @pt2
 
@@ -64,7 +64,7 @@ local	@hIns:	HINSTANCE
 		invoke	LoadBitmap, @hIns, @dwF
 		mov		@hIcon, eax
 		invoke	SelectObject,@hMemDC,@hIcon
-		invoke	BitBlt, @hdc, 0, 0, 20, 20, @hMemDC, 0, 0, SRCCOPY
+		invoke	BitBlt, @hdc, 0, 0, ICON_WIDTH, ICON_WIDTH, @hMemDC, 0, 0, SRCCOPY
 		invoke	ReleaseDC, _hWnd, @hdc
 		invoke	EndPaint,_hWnd,addr @ps
 	.elseif eax == WM_LBUTTONDOWN
