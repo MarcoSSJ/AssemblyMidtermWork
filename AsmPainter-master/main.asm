@@ -446,10 +446,11 @@ local	@dwPickColor: dword
 				invoke _BrushWhiteBg, offset stRegion
 				invoke	InvalidateRect, _hWnd, 0, FALSE
 				invoke	UpdateWindow, _hWnd
-				mov stRegion.bMouseDown, TRUE
+				mov stRegion.bMouseDown, FALSE
+				
+				mov bInRegion, FALSE
 				invoke SendMessage, hWinMain, WM_REGION_SAVEFILE, 0, 0
 
-				mov bInRegion, FALSE
 
 		.elseif ax == ID_REGION_COPY
 				invoke _CheckRightBeginEnd  
