@@ -8,7 +8,7 @@ local @pt2:POINT
 local @hWndColorBox:HWND
 local @rtWidth:DWORD
 local @rtHeight:DWORD
-	mov	eax, _isDock
+	mov	eax, _isDock;本来想做类似于toolbar嵌进去的效果,后面觉得还是算了
 	.if eax
 		invoke	SetRect,addr @rt,0,0,480,80
 		invoke	AdjustWindowRect,addr @rt,WS_CHILD or WS_VISIBLE or WS_BORDER,0

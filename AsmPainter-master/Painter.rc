@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// ÖÐÎÄ(¼òÌå£¬ÖÐ¹ú) resources
+// ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½å£¬ï¿½Ð¹ï¿½) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
@@ -25,18 +25,18 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE 
+1 TEXTINCLUDE
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE 
+2 TEXTINCLUDE
 BEGIN
     "#include ""winres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE 
+3 TEXTINCLUDE
 BEGIN
     "\r\n"
     "\0"
@@ -106,72 +106,112 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON                    "res\\1.ico"
-IDI_ICON2               ICON                    "res\\2.ico"
-IDI_ICON3               ICON                    "res\\3.ico"
-IDI_ICON4               ICON                    "res\\4.ico"
-IDI_ICON5               ICON                    "res\\5.ico"
-IDI_ICON6               ICON                    "res\\6.ico"
-IDI_ICON7               ICON                    "res\\7.ico"
-IDI_ICON8               ICON                    "res\\8.ico"
-IDI_ICON9               ICON                    "res\\9.ico"
-IDI_ICON_CIRCLE              ICON                    "res\\circle.ico"
-IDI_ICON_CIRCLEF              ICON                    "res\\circle_filled.ico"
-IDI_ICON_CLEARR              ICON                    "res\\clear_region.ico"
-IDI_ICON_CLEAR            ICON                    "res\\clear.ico"
-IDI_ICON_COLOR              ICON                    "res\\color.ico"
-IDI_ICON_COPY              ICON                    "res\\copy.ico"
-IDI_ICON_DOTTED              ICON                    "res\\dotted_line.ico"
-IDI_ICON_FILL              ICON                    "res\\fill.ico"
-IDI_ICON_LINE              ICON                    "res\\line.ico"
-IDI_ICON_LOAD              ICON                    "res\\load.ico"
-IDI_ICON_MOVE              ICON                    "res\\move.ico"
-IDI_ICON_PENCIL              ICON                    "res\\pencil.ico"
-IDI_ICON_PICK              ICON                    "res\\pick.ico"
-IDI_ICON_RECT              ICON                    "res\\rectangle.ico"
-IDI_ICON_RECTF              ICON                    "res\\rectangle_filled.ico"
-IDI_ICON_SAVE              ICON                    "res\\save.ico"
-IDI_ICON_SCREENSHOT              ICON                    "res\\screenshot.ico"
-IDI_ICON_SET              ICON                    "res\\set.ico"
-////////////////////////////////////////////////////////////////////////////
-//toolbar
-////////////////////////////////////////////////////////////////////////////
-stringtable	discardable
-BEGIN
-ID_FILE_OPENFILE		"´ò¿ªÎÄ¼þ"
-ID_FILE_SAVE			"±£´æÎÄ¼þ"
-ID_FILE_CLEAR			"Çå¿Õ»­Ãæ"
-ID_PEN_WIDTH1			"1"
-ID_PEN_WIDTH2			"2"
-ID_PEN_WIDTH3			"3"          
-ID_PEN_WIDTH4			"4"
-ID_PEN_WIDTH5			"5"
-ID_PEN_WIDTH6			"6"
-ID_PEN_WIDTH7           "7"
-ID_PEN_WIDTH8			"8"
-ID_PEN_WIDTH9           "9"
-ID_SHAPE_CIRCLE         "¿ÕÐÄÔ²"
-ID_SHAPE_RECTANGLE		"¿ÕÐÄ·½"
-ID_SHAPE_LINE			"ÊµÏß"
-ID_SHAPE_PENCIL			"Ç¦±Ê"
-ID_SHAPE_EARSER			"ÏðÆ¤"
-ID_SHAPE_CIRCLE_FILLED	"ÊµÐÄÔ²"
-ID_SHAPE_RECTANGLE_FILLED "ÊµÐÄ·½"
-ID_SHAPE_DOT			"ÐéÏß"
-ID_COLOR_SELECT			"µ÷É«"
-ID_COLOR_PICK			"È¡É«"
-ID_REGION_SET			"Ñ¡Çø"
-ID_REGION_SAVE			"Ñ¡Çø±£´æ"
-ID_REGION_MOVE			"Ñ¡ÇøÒÆ¶¯"
-ID_REGION_COPY			"Ñ¡Çø¸´ÖÆ"
-ID_REGION_CLEAR			"Ñ¡Çø²Á³ý"
-ID_REGION_FILL			"Ñ¡È¡Ìî³ä"
-IDM_NEW "ÐÂ½¨ÎÄ¼þ"
-IDM_OPEN "´ò¿ªÎÄ¼þ"
-IDM_SAVE "±£´æÎÄ¼þ"
+IDI_ICON_TITLE			ICON					  "res\\color.ico"
 
+IDI_ICON1               BITMAP                    "res\\1.bmp"
+
+IDI_ICON2               BITMAP                    "res\\2.bmp"
+
+IDI_ICON3               BITMAP                    "res\\3.bmp"
+
+IDI_ICON4               BITMAP                    "res\\4.bmp"
+
+IDI_ICON5               BITMAP                    "res\\5.bmp"
+
+IDI_ICON6               BITMAP                    "res\\6.bmp"
+
+IDI_ICON7               BITMAP                    "res\\7.bmp"
+
+IDI_ICON8               BITMAP                    "res\\8.bmp"
+
+IDI_ICON9               BITMAP                    "res\\9.bmp"
+
+IDI_ICON_CIRCLE         BITMAP                    "res\\circle.bmp"
+
+IDI_ICON_CIRCLEF        BITMAP                    "res\\circle_filled.bmp"
+
+IDI_ICON_CLEARR         BITMAP                   "res\\clear_region.bmp"
+
+IDI_ICON_CLEAR          BITMAP                    "res\\clear.bmp"
+
+IDI_ICON_COLOR          BITMAP                   "res\\color.bmp"
+
+IDI_ICON_COPY           BITMAP                   "res\\copy.bmp"
+
+IDI_ICON_DOTTED         BITMAP                    "res\\dotted_line.bmp"
+
+IDI_ICON_FILL           BITMAP                    "res\\fill.bmp"
+
+IDI_ICON_LINE           BITMAP                    "res\\line.bmp"
+
+IDI_ICON_LOAD           BITMAP                    "res\\load.bmp"
+
+IDI_ICON_MOVE           BITMAP                    "res\\move.bmp"
+
+IDI_ICON_PENCIL         BITMAP                    "res\\pencil.bmp"
+
+IDI_ICON_PICK           BITMAP                    "res\\pick.bmp"
+
+IDI_ICON_RECT           BITMAP                   "res\\rectangle.bmp"
+
+IDI_ICON_RECTF          BITMAP                   "res\\rectangle_filled.bmp"
+
+IDI_ICON_SAVE           BITMAP                    "res\\save.bmp"
+
+IDI_ICON_SCREENSHOT     BITMAP                    "res\\screenshot.bmp"
+
+IDI_ICON_SET            BITMAP                    "res\\set.bmp"
+
+IDI_ICON_ERASER			BITMAP					"res\\eraser.bmp"
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    ID_FILE_OPENFILE        "ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½"
+    ID_FILE_SAVE            "ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½"
+    ID_PEN_WIDTH1           "1"
+    ID_PEN_WIDTH2           "2"
+    ID_PEN_WIDTH3           "3"
+    ID_PEN_WIDTH4           "4"
+    ID_PEN_WIDTH5           "5"
+    ID_PEN_WIDTH6           "6"
+    ID_PEN_WIDTH7           "7"
+    ID_PEN_WIDTH8           "8"
+    ID_PEN_WIDTH9           "9"
+    ID_SHAPE_CIRCLE         "ï¿½ï¿½ï¿½ï¿½Ô²"
+    ID_SHAPE_RECTANGLE      "ï¿½ï¿½ï¿½Ä·ï¿½"
 END
-#endif    // ÖÐÎÄ(¼òÌå£¬ÖÐ¹ú) resources
+
+STRINGTABLE
+BEGIN
+    ID_SHAPE_LINE           "Êµï¿½ï¿½"
+    ID_SHAPE_PENCIL         "Ç¦ï¿½ï¿½"
+    ID_SHAPE_EARSER         "ï¿½ï¿½Æ¤"
+    ID_SHAPE_CIRCLE_FILLED  "Êµï¿½ï¿½Ô²"
+    ID_SHAPE_RECTANGLE_FILLED "Êµï¿½Ä·ï¿½"
+    ID_SHAPE_DOT            "ï¿½ï¿½ï¿½ï¿½"
+    ID_COLOR_SELECT         "ï¿½ï¿½É«"
+    ID_COLOR_PICK           "È¡É«"
+    ID_FILE_CLEAR           "ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½"
+    ID_REGION_SET           "Ñ¡ï¿½ï¿½"
+    ID_REGION_SAVE          "Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+    ID_REGION_MOVE          "Ñ¡ï¿½ï¿½ï¿½Æ¶ï¿½"
+    ID_REGION_COPY          "Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+    ID_REGION_CLEAR         "Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+    ID_REGION_FILL          "Ñ¡È¡ï¿½ï¿½ï¿½ï¿½"
+END
+
+STRINGTABLE
+BEGIN
+    IDM_NEW                 "ï¿½Â½ï¿½ï¿½Ä¼ï¿½"
+    IDM_OPEN                "ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½"
+    IDM_SAVE                "ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½"
+END
+
+#endif    // ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½å£¬ï¿½Ð¹ï¿½) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -185,4 +225,3 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

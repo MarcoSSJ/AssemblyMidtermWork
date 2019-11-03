@@ -1,35 +1,40 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ Éú³ÉµÄ°üº¬ÎÄ¼þ¡£
-// ¹© Painter.rc Ê¹ÓÃ
+// Microsoft Visual C++ ï¿½ï¿½ï¿½ÉµÄ°ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
+// ï¿½ï¿½ Painter.rc Ê¹ï¿½ï¿½
 //
-#define IDR_MENU1                       101
-#define IDI_ICON1                       104
-#define IDI_ICON2                       105
-#define IDI_ICON3                       106
-#define IDI_ICON4                       107
-#define IDI_ICON5                       108
-#define IDI_ICON6                       109
-#define IDI_ICON7                       110
-#define IDI_ICON8                       111
-#define IDI_ICON9                       112
-#define IDI_ICON10                      113
-#define IDI_ICON11                      114
-#define IDI_ICON12                      115
-#define IDI_ICON13                      116
-#define IDI_ICON14                      117
-#define IDI_ICON15                      118
-#define IDI_ICON16                      119
-#define IDI_ICON17                      120
-#define IDI_ICON18                      121
-#define IDI_ICON20                      123
-#define IDI_ICON21                      124
-#define IDI_ICON22                      125
-#define IDI_ICON23                      126
-#define IDI_ICON24                      127
-#define IDI_ICON25                      128
-#define IDI_ICON26                      129
-#define IDI_ICON27                      130
-#define IDI_ICON28                      131
+#define IDR_MENU1                       100
+#define IDI_ICON1                       101
+#define IDI_ICON2                       102
+#define IDI_ICON3                       103
+#define IDI_ICON4                       104
+#define IDI_ICON5                       105
+#define IDI_ICON6                       106
+#define IDI_ICON7                       107
+#define IDI_ICON8                       108
+#define IDI_ICON9                       109
+#define IDI_ICON_CIRCLE                 110
+#define IDI_ICON_CIRCLEF                111
+#define IDI_ICON_CLEARR                 112
+#define IDI_ICON_CLEAR                  113
+#define IDI_ICON_COLOR                  114
+#define IDI_ICON_COPY                   115
+#define IDI_ICON_DOTTED                 116
+#define IDI_ICON_FILL                   117
+#define IDI_ICON_LINE                   118
+#define IDI_ICON_LOAD                   119
+#define IDI_ICON_MOVE                   120
+#define IDI_ICON_PENCIL                 121
+#define IDI_ICON_PICK                   122
+#define IDI_ICON_RECT                   123
+#define IDI_ICON_RECTF                  124
+#define IDI_ICON_SAVE                   125
+#define IDI_ICON_SCREENSHOT             126
+#define IDI_ICON_SET                    127
+#define IDI_ICON_ERASER					128
+#define IDI_ICON_TITLE					129
+#define IDM_NEW                         1101
+#define IDM_OPEN                        1102
+#define IDM_SAVE                        1103
 #define ID_FILE                         40001
 #define ID_FILE_OPENFILE                40002
 #define ID_FILE_SAVE                    40003
@@ -57,19 +62,19 @@
 #define ID_REGION_SET                   40025
 #define ID_REGION_SAVE                  40026
 #define ID_REGION_MOVE                  40027
-#define ID_REGION_COPY                 40028
-#define ID_REGION_CLEAR            40029
+#define ID_REGION_COPY                  40028
+#define ID_REGION_CLEAR                 40029
 #define ID_REGION_FILL                  40030
 #define	IDM_NEW			1101
 #define	IDM_OPEN		1102
 #define	IDM_SAVE		1103
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        132
-#define _APS_NEXT_COMMAND_VALUE         40031
+#define _APS_NEXT_RESOURCE_VALUE        134
+#define _APS_NEXT_COMMAND_VALUE         40033
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

@@ -1,5 +1,5 @@
 *.ico
-
+*.bmp
 *.tlog
 *.db
 *.sln
@@ -11,4 +11,3 @@
 src/
 AsmPainter-master/.vs/
 AsmPainter-master/Debug/
-

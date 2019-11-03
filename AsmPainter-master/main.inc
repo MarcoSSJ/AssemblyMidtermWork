@@ -1,33 +1,33 @@
-;ÐÙÑÀÀûÃüÃû·¨
-;	b,w,dw	±íÊ¾±äÁ¿ÊÇbyte,word,dword
-;	h		±íÊ¾¾ä±ú
-;	lp		±íÊ¾Ö¸Õë
-;	sz		±íÊ¾×Ö·û´®
-;	lpsz	±íÊ¾×Ö·û´®Ö¸Õë
-;	f		±íÊ¾¸¡µãÊý
-;	st		±íÊ¾Ò»¸öÊý¾Ý½á¹¹
-;	±äÁ¿ÀàÐÍ+±äÁ¿Ãû,¿ªÍ·Ð¡Ð´,ºóÃæ´óÐ´
-;ÃüÃû¹æ·¶!
-;	ºê±äÁ¿ÓÃ´óÐ´+ÏÂ»®Ïß
-;	È«¾Ö±äÁ¿ÓÃÐÙÑÀÀûÃüÃû·¨
-;	²ÎÊýÓÃ_¿ªÍ·
-;	¾Ö²¿±äÁ¿ÓÃ@¿ªÍ·
-;	×Ô¶¨Òåº¯Êý¿ªÍ·±ØÐë¼ÓÏÂ»®Ïß!
-;	Ö¸ÁîºÍ¼Ä´æÆ÷ÓÃÐ¡Ð´
-;´úÂë¹æ·¶
-;	¾Ö²¿±äÁ¿µØÖ·Ê¹ÓÃaddr/lea,È«¾Ö±äÁ¿µØÖ·Ê¹ÓÃoffset
-;	È«¾Ö±äÁ¿¶¨ÒåÔÚ.incÖÐ
-;	ÒýÓÃ¿âº¯Êý¶¨ÒåÔÚ.incÖÐ
-;	Ê¹ÓÃequ¶ø²»ÊÇ=
-;	Ê¹ÓÃdb,dw,dd¶ø²»ÊÇbyte,word,dword
-;	Ìø×ªÊ¹ÓÃ@@ ºÍ @B(Ç°ÃæµÚÒ»¸ö@@) ºÍ@F(ºóÃæµÚÒ»¸ö@@)
-;	×Óº¯ÊýÇëÊ¹ÓÃproc,uses,localµÈÎ±Ö¸Áî
-;Ëõ½ø¹æ·¶
-;	Ò»°ã±äÁ¿ºÍ±êºÅ¶¨ÒåÇ°ÎÞËõ½ø
-;	Ò»Õû¿éµÄÖ¸ÁîÒªÓÃtab¶ÔÆë
-;	·ÖÖ§»òÑ­»·ÔÙËõ½øÒ»¸ñ
-;±ÜÃâÊÂÏî
-;	±ÜÃâÊ¹ÓÃºê
+;ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+;	b,w,dw	ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½byte,word,dword
+;	h		ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
+;	lp		ï¿½ï¿½Ê¾Ö¸ï¿½ï¿½
+;	sz		ï¿½ï¿½Ê¾ï¿½Ö·ï¿½ï¿½ï¿½
+;	lpsz	ï¿½ï¿½Ê¾ï¿½Ö·ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+;	f		ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+;	st		ï¿½ï¿½Ê¾Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ý½á¹¹
+;	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½Í·Ð¡Ð´,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´
+;ï¿½ï¿½ï¿½ï¿½ï¿½æ·¶!
+;	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½Ð´+ï¿½Â»ï¿½ï¿½ï¿½
+;	È«ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+;	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½Í·
+;	ï¿½Ö²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½@ï¿½ï¿½Í·
+;	ï¿½Ô¶ï¿½ï¿½åº¯ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â»ï¿½ï¿½ï¿½!
+;	Ö¸ï¿½ï¿½ï¿½Í¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡Ð´
+;ï¿½ï¿½ï¿½ï¿½ï¿½æ·¶
+;	ï¿½Ö²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·Ê¹ï¿½ï¿½addr/lea,È«ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½Ö·Ê¹ï¿½ï¿½offset
+;	È«ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.incï¿½ï¿½
+;	ï¿½ï¿½ï¿½Ã¿âº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.incï¿½ï¿½
+;	Ê¹ï¿½ï¿½equï¿½ï¿½ï¿½ï¿½ï¿½ï¿½=
+;	Ê¹ï¿½ï¿½db,dw,ddï¿½ï¿½ï¿½ï¿½ï¿½ï¿½byte,word,dword
+;	ï¿½ï¿½×ªÊ¹ï¿½ï¿½@@ ï¿½ï¿½ @B(Ç°ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½@@) ï¿½ï¿½@F(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½@@)
+;	ï¿½Óºï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½proc,uses,localï¿½ï¿½Î±Ö¸ï¿½ï¿½
+;ï¿½ï¿½ï¿½ï¿½ï¿½æ·¶
+;	Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í±ï¿½ï¿½Å¶ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+;	Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Òªï¿½ï¿½tabï¿½ï¿½ï¿½ï¿½
+;	ï¿½ï¿½Ö§ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+;ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+;	ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ãºï¿½
 
 include windows.inc
 include user32.inc
@@ -58,7 +58,8 @@ PAINTINFO ENDS
 WM_CHANGE_COLOR			equ			WM_USER + 1
 WM_SELECT_COLOR			equ			WM_USER + 2
 WM_REGION_SAVEFILE		equ			WM_USER + 3
-IDR_MENU1               equ			101
+WM_TAP_ICON				equ			WM_USER + 4
+
 ;IDM_OPEN				equ			30001
 ;IDM_SAVE				equ			30002
 ID_FILE_OPENFILE		equ			40002
@@ -77,7 +78,7 @@ ID_SHAPE_CIRCLE         equ         40014
 ID_SHAPE_RECTANGLE      equ         40015
 ID_SHAPE_LINE           equ         40016
 ID_SHAPE_PENCIL         equ         40017
-ID_SHAPE_EARSER         equ         40018
+ID_SHAPE_ERASER         equ         40018
 ID_SHAPE_CIRCLE_FILLED    equ       40019
 ID_SHAPE_RECTANGLE_FILLED equ       40020
 ID_SHAPE_DOT            equ         40021
@@ -105,35 +106,37 @@ WINDOW_WIDTH			equ			800
 WINDOW_HEIGHT			equ			600
 COLOR_BUTTON_WIDTH		equ			40
 
-;ico¶¨Òå
-IDI_ICON1               equ			1001
-IDI_ICON2               equ			1002
-IDI_ICON3               equ			1003
-IDI_ICON4               equ			1004
-IDI_ICON5               equ			1005
-IDI_ICON6               equ			1006
-IDI_ICON7               equ			1007
-IDI_ICON8               equ			1008
-IDI_ICON9               equ			1009
-IDI_ICON_CIRCLE         equ			1010
-IDI_ICON_CIRCLEF        equ			1011
-IDI_ICON_CLEARR         equ			1012
-IDI_ICON_CLEAR          equ			1013
-IDI_ICON_COLOR          equ			1014
-IDI_ICON_COPY           equ			1015
-IDI_ICON_DOTTED         equ			1016
-IDI_ICON_FILL           equ			1017
-IDI_ICON_LINE           equ			1018
-IDI_ICON_LOAD           equ			1019
-IDI_ICON_MOVE           equ			1020
-IDI_ICON_PENCIL         equ			1021
-IDI_ICON_PICK           equ			1022
-IDI_ICON_RECT           equ			1023
-IDI_ICON_RECTF          equ			1024
-IDI_ICON_SAVE           equ			1025
-IDI_ICON_SCREENSHOT     equ			1026
-IDI_ICON_SET            equ			1027
-
+;icoï¿½ï¿½ï¿½ï¿½
+IDR_MENU1               equ			100
+IDI_ICON1               equ			101
+IDI_ICON2               equ			102
+IDI_ICON3               equ			103
+IDI_ICON4               equ			104
+IDI_ICON5               equ			105
+IDI_ICON6               equ			106
+IDI_ICON7               equ			107
+IDI_ICON8               equ			108
+IDI_ICON9               equ			109
+IDI_ICON_CIRCLE         equ			110
+IDI_ICON_CIRCLEF        equ			111
+IDI_ICON_CLEARR         equ			112
+IDI_ICON_CLEAR          equ			113
+IDI_ICON_COLOR          equ			114
+IDI_ICON_COPY           equ			115
+IDI_ICON_DOTTED         equ			116
+IDI_ICON_FILL           equ			117
+IDI_ICON_LINE           equ			118
+IDI_ICON_LOAD           equ			119
+IDI_ICON_MOVE           equ			120
+IDI_ICON_PENCIL         equ			121
+IDI_ICON_PICK           equ			122
+IDI_ICON_RECT           equ			123
+IDI_ICON_RECTF          equ			124
+IDI_ICON_SAVE           equ			125
+IDI_ICON_SCREENSHOT     equ			126
+IDI_ICON_SET            equ			127
+IDI_ICON_ERASER			equ			128
+IDI_ICON_TITLE			equ			129
 ID_TOOLBAR				equ			1
 
 IDM_NEW		equ	1101
@@ -146,7 +149,7 @@ WHITE_COLOR				equ			0ffffffh
 ;bMouseClick				db			FALSE
 
 bpenwidth				db			1
-bpentype				db			0;1£ºpencil, 2£ºcircle, 3:Rectangle, 4:line, default:pencil
+bpentype				db			0;1ï¿½ï¿½pencil, 2ï¿½ï¿½circle, 3:Rectangle, 4:line, default:pencil
 dwColors				dd			0h,\
 									0c0c0c0h,\
 									0808080h,\
@@ -172,6 +175,38 @@ dwColors				dd			0h,\
 									04080h,\
 									0ff0080h
 COLORS_NUM				equ			($ - offset dwColors) / 4
+
+dwIcons					dd			IDI_ICON_LOAD,\
+									IDI_ICON_SAVE,\
+									IDI_ICON_CLEAR,\
+									IDI_ICON_PENCIL,\
+									IDI_ICON_ERASER,\
+									IDI_ICON_RECT,\
+									IDI_ICON_CIRCLE,\
+									IDI_ICON_LINE,\
+									IDI_ICON_RECTF,\
+									IDI_ICON_CIRCLEF
+dwIcons1						dd	IDI_ICON_DOTTED,\
+									IDI_ICON_COLOR,\
+									IDI_ICON_PICK,\
+									IDI_ICON_SET,\
+									IDI_ICON_CLEARR,\
+									IDI_ICON_FILL,\
+									IDI_ICON_MOVE,\
+									IDI_ICON_COPY,\
+									IDI_ICON_SCREENSHOT
+dwIcons2				dd			IDI_ICON1,\
+									IDI_ICON2,\
+									IDI_ICON3,\
+									IDI_ICON4,\
+									IDI_ICON5,\
+									IDI_ICON6,\
+									IDI_ICON7,\
+									IDI_ICON8,\
+									IDI_ICON9
+ICON_NUM				equ			($ - offset dwIcons) / 4
+ICON_WIDTH				equ			24
+
 
 .data?
 hInstance				dd			?
@@ -210,20 +245,14 @@ szClassName				db			'MyClass',0
 szCaptionMain			db			'MyPainter',0
 szColorBtnClass			db			'ColorBtn', 0
 szColorBoxClass			db			'ColorBox', 0
+szToolBtnClass			db			'ToolBtn',0
+szToolBoxClass			db			'ToolBox',0
+
 szFilter				db			"BitMap(*.bmp)",0,"*.bmp",0
 szOtherBmp				db			".bmp",0
 szDefaultSaveFile		db			"1.bmp",0
 szDefaultOpenFile		db			".bmp",0
-szErrorSuffixNoBmp		db			'±£´æ¸ñÊ½±ØÐëÒÔbmp½áÎ²!',0
-szErrorNotRegion			db			'Error! ±ØÐëÏÈÑ¡ÔñRegion Set',0
-szErrorZeroRegion		db			'Error! ±ØÐëÑ¡ÔñÓÐ´óÐ¡µÄRegion',0
+szErrorSuffixNoBmp		db			'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bmpï¿½ï¿½Î²!',0
+szErrorNotRegion			db			'Error! ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½Region Set',0
+szErrorZeroRegion		db			'Error! ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½Ð´ï¿½Ð¡ï¿½ï¿½Region',0
 stToolbar	equ	this byte
-;TBBUTTON	<IDI_ICON_LOAD,ID_FILE_OPENFILE,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;TBBUTTON	<IDI_ICON_SAVE,ID_FILE_SAVE,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;TBBUTTON	<IDI_ICON_CLEAR, ID_FILE_CLEAR,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-;TBBUTTON	<0,0,TBSTATE_ENABLED,TBSTYLE_SEP,0,0,-1>
-TBBUTTON	<STD_FILENEW,IDM_NEW,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-TBBUTTON	<STD_FILEOPEN,IDM_OPEN,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-TBBUTTON	<STD_FILESAVE,IDM_SAVE,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0,-1>
-TBBUTTON	<0,0,TBSTATE_ENABLED,TBSTYLE_SEP,0,0,-1>
-NUM_BUTTONS	EQU	4
